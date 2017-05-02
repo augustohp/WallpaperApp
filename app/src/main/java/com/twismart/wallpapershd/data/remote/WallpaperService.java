@@ -13,6 +13,7 @@ import retrofit2.http.Url;
 public interface WallpaperService {
     @GET
     Call<ArrayList<Wallpaper>> getWallpapersList(@Url String url);
+    Observable
 
     class Factory {
         private static final String BASE_URL = "http://52.45.144.5/wallpapers/";
