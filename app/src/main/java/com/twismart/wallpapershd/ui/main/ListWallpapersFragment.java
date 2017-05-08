@@ -16,22 +16,30 @@ import android.view.ViewGroup;
 import com.twismart.wallpapershd.R;
 import com.twismart.wallpapershd.data.model.Wallpaper;
 import com.twismart.wallpapershd.data.remote.WallpaperService;
+import com.twismart.wallpapershd.ui.base.BaseFragment;
 import com.twismart.wallpapershd.utils.Constants;
 
 import java.util.ArrayList;
+import java.util.Observable;
+
+import javax.inject.Inject;
 
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
 
-public class ListWallpapersFragment extends Fragment {
+public class ListWallpapersFragment extends BaseFragment implements ListWallpapersView {
+
     private final String TAG = getClass().getSimpleName();
     private static final String ARG_TYPE_LIST = "typeListWallpapers";
     private OnFragmentInteractionListener mListener;
     private ListWallpapersRecyclerViewAdapter mWallpapersRecyclerViewAdapter;
     private RecyclerView mRecyclerView;
     private String typeListWallpapers;
+
+    @Inject
+    ListWallpapersPresenterImpl<ListWallpapersView> mPresenter;
 
     public ListWallpapersFragment() {
         // Required empty public constructor
@@ -57,6 +65,8 @@ public class ListWallpapersFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_list_wallpapers, container, false);
 
+        getActivityComponent().inject(this);
+
         mRecyclerView = (RecyclerView) v.findViewById(R.id.recycler_wallpapers);
         mRecyclerView.setHasFixedSize(true);
         GridLayoutManager gridLayoutManager = new GridLayoutManager(getContext(), 3);
@@ -65,7 +75,9 @@ public class ListWallpapersFragment extends Fragment {
         mWallpapersRecyclerViewAdapter = new ListWallpapersRecyclerViewAdapter(getContext());
         mRecyclerView.setAdapter(mWallpapersRecyclerViewAdapter);
 
+
         Log.d(TAG, "typelist");
+
         if(typeListWallpapers.equals(Constants.TypeListWallpapers.ALL.value)){
             if(BuildConfig.DEBUG){
                 Log.d(TAG, "typelist all");
@@ -73,9 +85,12 @@ public class ListWallpapersFragment extends Fragment {
             else{
                 Log.d(TAG, "typelist all nodebug");
             }
+            mPresenter.attachView(this);
+            mPresenter.getWallpapersList();
+            /*
             WallpaperService wallpaperService = WallpaperService.Factory.create();
 
-            Call<ArrayList<Wallpaper>> wallpapersList = wallpaperService.getWallpapersList("index.php");
+            Observable<ArrayList<Wallpaper>> wallpapersList = wallpaperService.getWallpapersList("index.php");
             wallpapersList.enqueue(new Callback<ArrayList<Wallpaper>>() {
                 @Override
                 public void onResponse(Call<ArrayList<Wallpaper>> call, Response<ArrayList<Wallpaper>> response) {
@@ -89,10 +104,16 @@ public class ListWallpapersFragment extends Fragment {
                     Log.e(TAG, "onFailure: " + t.getMessage());
                 }
             });
+            */
         }
 
 
         return v;
+    }
+
+    @Override
+    public void setWallpaperList(ArrayList<Wallpaper> wallpaperList) {
+        mWallpapersRecyclerViewAdapter.setWallpaperList(wallpaperList);
     }
 
     @Override
@@ -109,6 +130,7 @@ public class ListWallpapersFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        mPresenter.dettachView();
     }
 
     public interface OnFragmentInteractionListener {

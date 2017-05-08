@@ -16,6 +16,7 @@ import android.view.MenuItem;
 
 import com.twismart.wallpapershd.R;
 import com.twismart.wallpapershd.data.model.Wallpaper;
+import com.twismart.wallpapershd.ui.base.BaseActivity;
 import com.twismart.wallpapershd.utils.Constants;
 
 import java.io.IOException;
@@ -24,7 +25,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class WallpapersActivity extends AppCompatActivity {
+public class WallpapersActivity extends BaseActivity {
 
     private final String TAG = getClass().getSimpleName();
     private ViewPager mViewPager;
@@ -42,7 +43,12 @@ public class WallpapersActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_wallpaper);
+        getActivityComponent().inject(this);
+        setUp();
+    }
 
+    @Override
+    protected void setUp() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

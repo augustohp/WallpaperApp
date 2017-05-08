@@ -7,14 +7,20 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 
 import com.twismart.wallpapershd.R;
+import com.twismart.wallpapershd.ui.base.BaseActivity;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends BaseActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        getActivityComponent().inject(this);
+        setUp();
+    }
 
+    @Override
+    protected void setUp() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 

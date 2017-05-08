@@ -9,45 +9,38 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringRes;
 import android.support.design.widget.Snackbar;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.TextView;
 
 import com.twismart.wallpapershd.R;
+import com.twismart.wallpapershd.WallpaperApplication;
+import com.twismart.wallpapershd.di.component.ActivityComponent;
+import com.twismart.wallpapershd.di.component.DaggerActivityComponent;
+import com.twismart.wallpapershd.di.module.ActivityModule;
 import com.twismart.wallpapershd.utils.CommonUtils;
 import com.twismart.wallpapershd.utils.NetworkUtils;
 
-public abstract class BaseActivity extends AppCompatActivity implements MvpView {
+public abstract class BaseActivity extends AppCompatActivity implements BaseView {
 
     private ProgressDialog mProgressDialog;
-    /*
+
     private ActivityComponent mActivityComponent;
-    private Unbinder mUnBinder;
-    */
+
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*
         mActivityComponent = DaggerActivityComponent.builder()
                 .activityModule(new ActivityModule(this))
-                .applicationComponent(((MvpApp) getApplication()).getComponent())
+                .applicationComponent(((WallpaperApplication) getApplication()).getComponent())
                 .build();
-                */
     }
-    /*
+
     public ActivityComponent getActivityComponent() {
         return mActivityComponent;
     }
-    */
 
-    /*
-    @Override
-    protected void attachBaseContext(Context newBase) {
-        super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase));
-    }
-    */
 
     @TargetApi(Build.VERSION_CODES.M)
     public void requestPermissionsSafely(String[] permissions, int requestCode) {
@@ -108,19 +101,8 @@ public abstract class BaseActivity extends AppCompatActivity implements MvpView 
         }
     }
 
-    /*
-    public void setUnBinder(Unbinder unBinder) {
-        mUnBinder = unBinder;
-    }
-    */
-
     @Override
     protected void onDestroy() {
-        /*
-        if (mUnBinder != null) {
-            mUnBinder.unbind();
-        }
-        */
         super.onDestroy();
     }
 
