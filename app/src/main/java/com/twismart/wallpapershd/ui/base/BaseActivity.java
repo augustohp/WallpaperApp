@@ -27,7 +27,6 @@ public abstract class BaseActivity extends AppCompatActivity implements BaseView
 
     private ActivityComponent mActivityComponent;
 
-
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

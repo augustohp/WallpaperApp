@@ -7,7 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.twismart.wallpapershd.R;
 import com.twismart.wallpapershd.data.model.Wallpaper;
 import com.twismart.wallpapershd.ui.wallpaper.WallpapersActivity;
@@ -61,11 +62,16 @@ public class ListWallpapersRecyclerViewAdapter extends RecyclerView.Adapter<List
         }
 
         private void bindData(final Wallpaper itemWallpaper, final int position){
-            Picasso.with(context).load(itemWallpaper.getUrlImage()).resize(CommonUtils.getWitdhOfWallpaperInList(context), CommonUtils.getWitdhOfWallpaperInList(context)).into(imageWallpaper);
+            Glide.with(context)
+                    .load(itemWallpaper.getUrlImage())
+                    .asBitmap()
+                    .override(CommonUtils.getWitdhOfWallpaperInList(context), CommonUtils.getWitdhOfWallpaperInList(context))
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .into(imageWallpaper);
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    WallpapersActivity.start(context, wallpaperList, position);
+                    context.startActivity(WallpapersActivity.newIntent(context, wallpaperList, position));
                 }
             });
             mView.setOnLongClickListener(new View.OnLongClickListener() {

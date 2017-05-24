@@ -14,6 +14,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.crashlytics.android.Crashlytics;
 import com.twismart.wallpapershd.R;
 import com.twismart.wallpapershd.data.model.Wallpaper;
 import com.twismart.wallpapershd.ui.base.BaseActivity;
@@ -25,18 +26,24 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 
-public class WallpapersActivity extends BaseActivity {
+import javax.inject.Inject;
+
+import hugo.weaving.DebugLog;
+
+public class WallpapersActivity extends BaseActivity implements WallpapersContract.View {
 
     private final String TAG = getClass().getSimpleName();
     private ViewPager mViewPager;
     private ArrayList<Wallpaper> wallpapersList;
 
+    @Inject WallpapersContract.Presenter<WallpapersContract.View> mPresenter;
 
-    public static void start(Context context, ArrayList<Wallpaper> wallpaperList, int wallpaperToShow) {
-        Intent starter = new Intent(context, WallpapersActivity.class);
-        starter.putParcelableArrayListExtra(Constants.WALLPAPERS_LIST, wallpaperList);
-        starter.putExtra(Constants.WALLPAPER_TO_SHOW, wallpaperToShow);
-        context.startActivity(starter);
+    // replace for start method because this one is more flexible
+    public static Intent newIntent(Context context, ArrayList<Wallpaper> wallpaperList, int wallpaperToShow){
+        Intent newIntent = new Intent(context, WallpapersActivity.class);
+        newIntent.putParcelableArrayListExtra(Constants.WALLPAPERS_LIST, wallpaperList);
+        newIntent.putExtra(Constants.WALLPAPER_TO_SHOW, wallpaperToShow);
+        return newIntent;
     }
 
     @Override
@@ -45,8 +52,10 @@ public class WallpapersActivity extends BaseActivity {
         setContentView(R.layout.activity_wallpaper);
         getActivityComponent().inject(this);
         setUp();
+        mPresenter.attachView(this);
     }
 
+    @DebugLog
     @Override
     protected void setUp() {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -63,6 +72,7 @@ public class WallpapersActivity extends BaseActivity {
             mViewPager.setCurrentItem(getIntent().getIntExtra(Constants.WALLPAPER_TO_SHOW, 0));
         }
         catch (Exception e){
+            Crashlytics.logException(e);
             e.printStackTrace();
             finish();
         }
@@ -83,6 +93,8 @@ public class WallpapersActivity extends BaseActivity {
             case R.id.menu_set_wallpaper:
                 String url = wallpapersList.get(mViewPager.getCurrentItem()).getUrlImage();
                 Log.d(TAG, "onOptionsItemSelected: urlImage " + url);
+                mPresenter.setWallpaper(url);
+
                 WallpaperManager mWallpaperManager = WallpaperManager.getInstance(getApplicationContext());
                 try {
                     mWallpaperManager.setBitmap(new DownloadImagesTask().doInBackground(url));
@@ -93,5 +105,11 @@ public class WallpapersActivity extends BaseActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mPresenter.dettachView();
     }
 }

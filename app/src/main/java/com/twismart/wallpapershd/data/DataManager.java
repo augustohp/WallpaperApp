@@ -4,14 +4,15 @@ import android.content.Context;
 
 import com.twismart.wallpapershd.data.model.Wallpaper;
 import com.twismart.wallpapershd.data.remote.WallpaperService;
+import com.twismart.wallpapershd.di.annotation.ApplicationContext;
 
 import java.util.ArrayList;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import io.reactivex.Observable;
 import retrofit2.http.Url;
-import rx.Observable;
 
 /**
  * Created by sneyd on 5/1/2017.
@@ -25,7 +26,8 @@ public class DataManager {
     private WallpaperService mWallpaperService;
 
     @Inject
-    public DataManager(WallpaperService mWallpaperService) {
+    public DataManager(@ApplicationContext Context context, WallpaperService mWallpaperService) {
+        this.mContext = context;
         this.mWallpaperService = mWallpaperService;
     }
 

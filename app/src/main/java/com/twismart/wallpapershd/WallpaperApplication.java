@@ -2,11 +2,13 @@ package com.twismart.wallpapershd;
 
 import android.app.Application;
 
+import com.crashlytics.android.Crashlytics;
 import com.twismart.wallpapershd.data.DataManager;
 import com.twismart.wallpapershd.di.component.ApplicationComponent;
 import com.twismart.wallpapershd.di.component.DaggerApplicationComponent;
 import com.twismart.wallpapershd.di.module.ApplicationModule;
 
+import io.fabric.sdk.android.Fabric;
 import javax.inject.Inject;
 
 /**
@@ -23,6 +25,7 @@ public class WallpaperApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Fabric.with(this, new Crashlytics());
         initAppComponent();
     }
 

@@ -10,10 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.squareup.picasso.Picasso;
 import com.twismart.wallpapershd.R;
 import com.twismart.wallpapershd.data.model.Wallpaper;
-import com.twismart.wallpapershd.utils.Constants;
 
 public class WallpaperFragment extends Fragment {
 
@@ -28,7 +29,7 @@ public class WallpaperFragment extends Fragment {
     private ImageView imageWallpaper;
 
     // Dimensions used for the wallpaper
-    private int widthEnd, heightEnd;
+    private float widthEnd, heightEnd;
 
 
     public WallpaperFragment() {
@@ -60,11 +61,10 @@ public class WallpaperFragment extends Fragment {
         imageWallpaper.post(new Runnable() {
             @Override
             public void run() {
-                Log.d(TAG, "onCreate: width " + imageWallpaper.getWidth());
                 try{
                     // Calculate the width and height in order to fit the image correctly
-                    int widthWallpaper = Integer.parseInt(wallpaper.getWidth());
-                    int heightWallpaper = Integer.parseInt(wallpaper.getHeight());
+                    float widthWallpaper = Float.parseFloat(wallpaper.getWidth());
+                    float heightWallpaper = Float.parseFloat(wallpaper.getHeight());
 
                     if(widthWallpaper > heightWallpaper){
                         widthEnd = imageWallpaper.getWidth();
@@ -75,10 +75,13 @@ public class WallpaperFragment extends Fragment {
                         widthEnd = (widthWallpaper / heightWallpaper) * heightEnd;
                     }
                     // Pick up whether the image comes from a url or a path
+                    Log.d(TAG, "onCreate: widthEnd " + widthEnd + " heightEnd " + heightEnd);
                     String sourceImage = wallpaper.getUrlImage().isEmpty() ? wallpaper.getPathImage(): wallpaper.getUrlImage();
-                    Picasso.with(getContext())
+                    Glide.with(getContext())
                             .load(sourceImage)
-                            .resize(widthEnd, heightEnd)
+                            .asBitmap()
+                            .override((int)widthEnd, (int)heightEnd)
+                            .diskCacheStrategy(DiskCacheStrategy.RESULT)
                             .into(imageWallpaper);
                 }
                 catch (Exception e){

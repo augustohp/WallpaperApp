@@ -1,5 +1,6 @@
 package com.twismart.wallpapershd.ui.main;
 
+import android.content.Intent;
 import android.support.design.widget.TabLayout;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
@@ -17,6 +18,12 @@ public class MainActivity extends BaseActivity {
         setContentView(R.layout.activity_main);
         getActivityComponent().inject(this);
         setUp();
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+
     }
 
     @Override

@@ -5,12 +5,14 @@ import android.content.Context;
 
 import com.twismart.wallpapershd.di.annotation.ActivityContext;
 import com.twismart.wallpapershd.di.annotation.PerActivity;
+import com.twismart.wallpapershd.ui.main.ListWallpapersContract;
 import com.twismart.wallpapershd.ui.main.ListWallpapersPresenter;
-import com.twismart.wallpapershd.ui.main.ListWallpapersPresenterImpl;
-import com.twismart.wallpapershd.ui.main.ListWallpapersView;
+import com.twismart.wallpapershd.ui.wallpaper.WallpapersContract;
+import com.twismart.wallpapershd.ui.wallpaper.WallpapersPresenter;
 
 import dagger.Module;
 import dagger.Provides;
+import io.reactivex.disposables.CompositeDisposable;
 
 @Module
 public class ActivityModule {
@@ -33,7 +35,18 @@ public class ActivityModule {
 
     @Provides
     @PerActivity
-    ListWallpapersPresenter<ListWallpapersView> listWallpapersPresenter(ListWallpapersPresenterImpl<ListWallpapersView> presenter){
+    ListWallpapersContract.Presenter<ListWallpapersContract.View> listWallpapersPresenter(ListWallpapersPresenter<ListWallpapersContract.View> presenter){
         return presenter;
+    }
+
+    @Provides
+    @PerActivity
+    WallpapersContract.Presenter<WallpapersContract.View> wallpapersPresenter(WallpapersPresenter<WallpapersContract.View> presenter){
+        return presenter;
+    }
+
+    @Provides
+    CompositeDisposable provideCompositeDisposable() {
+        return new CompositeDisposable();
     }
 }

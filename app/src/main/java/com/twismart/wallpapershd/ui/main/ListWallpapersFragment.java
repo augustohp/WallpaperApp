@@ -1,35 +1,26 @@
 package com.twismart.wallpapershd.ui.main;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v7.appcompat.BuildConfig;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import com.twismart.wallpapershd.R;
 import com.twismart.wallpapershd.data.model.Wallpaper;
-import com.twismart.wallpapershd.data.remote.WallpaperService;
 import com.twismart.wallpapershd.ui.base.BaseFragment;
 import com.twismart.wallpapershd.utils.Constants;
 
 import java.util.ArrayList;
-import java.util.Observable;
 
 import javax.inject.Inject;
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
 
-
-public class ListWallpapersFragment extends BaseFragment implements ListWallpapersView {
+public class ListWallpapersFragment extends BaseFragment implements ListWallpapersContract.View {
 
     private final String TAG = getClass().getSimpleName();
     private static final String ARG_TYPE_LIST = "typeListWallpapers";
@@ -38,8 +29,7 @@ public class ListWallpapersFragment extends BaseFragment implements ListWallpape
     private RecyclerView mRecyclerView;
     private String typeListWallpapers;
 
-    @Inject
-    ListWallpapersPresenterImpl<ListWallpapersView> mPresenter;
+    @Inject ListWallpapersPresenter<ListWallpapersContract.View> mPresenter;
 
     public ListWallpapersFragment() {
         // Required empty public constructor
@@ -128,9 +118,9 @@ public class ListWallpapersFragment extends BaseFragment implements ListWallpape
 
     @Override
     public void onDetach() {
-        super.onDetach();
         mListener = null;
         mPresenter.dettachView();
+        super.onDetach();
     }
 
     public interface OnFragmentInteractionListener {
