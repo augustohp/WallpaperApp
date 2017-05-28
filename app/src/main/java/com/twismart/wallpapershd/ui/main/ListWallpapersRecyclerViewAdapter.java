@@ -71,7 +71,7 @@ public class ListWallpapersRecyclerViewAdapter extends RecyclerView.Adapter<List
             mView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    context.startActivity(WallpapersActivity.newIntent(context, wallpaperList, position));
+                    context.startActivity(WallpapersActivity.Companion.newIntent(context, wallpaperList, position));
                 }
             });
             mView.setOnLongClickListener(new View.OnLongClickListener() {
