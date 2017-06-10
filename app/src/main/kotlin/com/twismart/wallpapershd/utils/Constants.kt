@@ -5,7 +5,6 @@ package com.twismart.wallpapershd.utils
  **/
 
 object Constants {
-    val URL_WALLPAPERS = "http://52.45.144.5/wallpapers/"
     val WALLPAPERS_LIST = "listWallpapers"
     val WALLPAPER_TO_SHOW = "wallpaperToShow"
 

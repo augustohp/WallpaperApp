@@ -14,7 +14,9 @@ import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.data.model.Wallpaper
 import com.twismart.wallpapershd.ui.base.BaseFragment
 import com.twismart.wallpapershd.utils.Constants
+import com.twismart.wallpapershd.utils.inflate
 import java.util.ArrayList
+import kotlinx.android.synthetic.main.fragment_list_wallpapers.*
 
 import javax.inject.Inject
 
@@ -46,18 +48,23 @@ class ListWallpapersFragment : BaseFragment(), ListWallpapersContract.View {
         }
     }
 
+
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val v = inflater?.inflate(R.layout.fragment_list_wallpapers, container, false)
+        val v = context?.inflate(R.layout.fragment_list_wallpapers, container)
 
         activityComponent?.inject(this)
 
-        val recyclerViewWallpapers: RecyclerView? = v?.findViewById(R.id.recyclerViewWallpapers) as RecyclerView?
-        recyclerViewWallpapers?.setHasFixedSize(true)
-        val gridLayoutManager : RecyclerView.LayoutManager = GridLayoutManager(context, 3)
-        recyclerViewWallpapers?.layoutManager = gridLayoutManager
+        return v
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+
+        recyclerViewWallpapers.setHasFixedSize(true)
+        recyclerViewWallpapers.layoutManager = GridLayoutManager(context, 3)
 
         mWallpapersRecyclerViewAdapter = ListWallpapersRecyclerViewAdapter(context)
-        recyclerViewWallpapers?.adapter = mWallpapersRecyclerViewAdapter
+        recyclerViewWallpapers.adapter = mWallpapersRecyclerViewAdapter
 
         if (typeListWallpapers == Constants.TypeListWallpapers.ALL.value) {
             if (BuildConfig.DEBUG) {
@@ -68,7 +75,6 @@ class ListWallpapersFragment : BaseFragment(), ListWallpapersContract.View {
             mPresenter.attachView(this)
             mPresenter.getWallpapersList()
         }
-        return v
     }
 
     override fun setWallpaperList(wallpaperList: ArrayList<Wallpaper>) {

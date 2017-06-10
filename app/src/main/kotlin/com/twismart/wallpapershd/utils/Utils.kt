@@ -49,7 +49,7 @@ fun View.gone() {
     visibility = View.GONE
 }
 
-fun Context.inflate(res: Int, parent: ViewGroup? = null) : View {
+fun Context.inflate(res: Int, parent: ViewGroup? = null, attachToRoot: Boolean = false) : View {
     return LayoutInflater.from(this).inflate(res, parent, false)
 }
 
