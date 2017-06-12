@@ -8,12 +8,12 @@ import com.twismart.wallpapershd.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_main.*
 import org.jetbrains.anko.*
 
-class MainActivity : BaseActivity(), AnkoLogger {
+class MainActivity : BaseActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        activityComponent?.inject(this)
+        activityComponent.inject(this)
         setUp()
     }
 

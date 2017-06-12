@@ -1,8 +1,7 @@
 package com.twismart.wallpapershd.ui.main
 
 import com.twismart.wallpapershd.data.model.Wallpaper
-import com.twismart.wallpapershd.ui.base.BasePresenter
-import com.twismart.wallpapershd.ui.base.BaseView
+import com.twismart.wallpapershd.ui.base.BaseContract
 
 import java.util.ArrayList
 
@@ -12,11 +11,11 @@ import java.util.ArrayList
 
 class ListWallpapersContract {
 
-    interface Presenter<V : ListWallpapersContract.View> : BasePresenter<V> {
+    interface Presenter<V : ListWallpapersContract.View> : BaseContract.Presenter<V> {
         fun getWallpapersList()
     }
 
-    interface View : BaseView {
+    interface View : BaseContract.View {
         fun setWallpaperList(wallpaperList: ArrayList<Wallpaper>)
     }
 }

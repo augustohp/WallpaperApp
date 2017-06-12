@@ -15,6 +15,7 @@ import java.util.ArrayList
  **/
 
 class WallpapersPagerAdapter(fragmentManager: FragmentManager, val context: Context, val wallpaperList: ArrayList<Wallpaper>?) : FragmentPagerAdapter(fragmentManager) {
+
     override fun getItem(position: Int) = WallpaperFragment.newInstance(wallpaperList!![position])
 
     override fun getCount() = wallpaperList?.size ?: 0

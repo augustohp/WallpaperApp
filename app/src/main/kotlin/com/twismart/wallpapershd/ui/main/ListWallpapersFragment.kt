@@ -5,8 +5,6 @@ import android.net.Uri
 import android.os.Bundle
 import android.support.v7.appcompat.BuildConfig
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,12 +12,11 @@ import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.data.model.Wallpaper
 import com.twismart.wallpapershd.ui.base.BaseFragment
 import com.twismart.wallpapershd.utils.Constants
+import com.twismart.wallpapershd.utils.debug
 import com.twismart.wallpapershd.utils.inflate
 import java.util.ArrayList
 import kotlinx.android.synthetic.main.fragment_list_wallpapers.*
-
 import javax.inject.Inject
-
 
 class ListWallpapersFragment : BaseFragment(), ListWallpapersContract.View {
 
@@ -34,7 +31,6 @@ class ListWallpapersFragment : BaseFragment(), ListWallpapersContract.View {
         }
     }
 
-    val TAG = javaClass.simpleName
     var mListener: OnFragmentInteractionListener? = null
     var mWallpapersRecyclerViewAdapter: ListWallpapersRecyclerViewAdapter? = null
     var typeListWallpapers: String? = null
@@ -50,11 +46,9 @@ class ListWallpapersFragment : BaseFragment(), ListWallpapersContract.View {
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        val v = context?.inflate(R.layout.fragment_list_wallpapers, container)
+        activityComponent.inject(this)
 
-        activityComponent?.inject(this)
-
-        return v
+        return context?.inflate(R.layout.fragment_list_wallpapers, container)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
@@ -68,9 +62,9 @@ class ListWallpapersFragment : BaseFragment(), ListWallpapersContract.View {
 
         if (typeListWallpapers == Constants.TypeListWallpapers.ALL.value) {
             if (BuildConfig.DEBUG) {
-                Log.d(TAG, "typelist all")
+                debug("typelist all")
             } else {
-                Log.d(TAG, "typelist all nodebug ")
+                debug("typelist all nodebug ")
             }
             mPresenter.attachView(this)
             mPresenter.getWallpapersList()

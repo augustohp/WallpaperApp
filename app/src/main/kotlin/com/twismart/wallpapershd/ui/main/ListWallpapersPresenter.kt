@@ -1,16 +1,11 @@
 package com.twismart.wallpapershd.ui.main
 
-import android.util.Log
-
 import com.twismart.wallpapershd.data.DataManager
 import com.twismart.wallpapershd.data.model.Wallpaper
-import com.twismart.wallpapershd.ui.base.BasePresenterImpl
-
-
+import com.twismart.wallpapershd.ui.base.BasePresenter
+import com.twismart.wallpapershd.utils.debug
 import java.util.ArrayList
-
 import javax.inject.Inject
-
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.CompositeDisposable
 import io.reactivex.observers.DisposableObserver
@@ -21,9 +16,7 @@ import io.reactivex.schedulers.Schedulers
  **/
 
 class ListWallpapersPresenter<V : ListWallpapersContract.View> @Inject
-constructor(dataManager: DataManager, compositeDisposable: CompositeDisposable) : BasePresenterImpl<V>(dataManager, compositeDisposable), ListWallpapersContract.Presenter<V> {
-
-    private val TAG = javaClass.simpleName
+constructor(dataManager: DataManager, compositeDisposable: CompositeDisposable) : BasePresenter<V>(dataManager, compositeDisposable), ListWallpapersContract.Presenter<V> {
 
     override fun getWallpapersList() {
         compositeDisposable.add(dataManager
@@ -32,16 +25,14 @@ constructor(dataManager: DataManager, compositeDisposable: CompositeDisposable) 
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableObserver<ArrayList<Wallpaper>>() {
                     override fun onNext(wallpapers: ArrayList<Wallpaper>) {
-                        Log.d(TAG, "onNext: " + wallpapers.toString())
-                        baseView!!.setWallpaperList(wallpapers)
+                        debug("onNext: " + wallpapers.toString())
+                        baseView?.setWallpaperList(wallpapers)
                     }
-
                     override fun onError(e: Throwable) {
-                        Log.d(TAG, "onError: ")
+                        debug("onError")
                     }
-
                     override fun onComplete() {
-                        Log.d(TAG, "onCompleted: ")
+                        debug("onComplete")
                     }
                 })
         )

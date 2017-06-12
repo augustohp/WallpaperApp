@@ -1,7 +1,6 @@
 package com.twismart.wallpapershd.ui.wallpaper
 
-import com.twismart.wallpapershd.ui.base.BasePresenter
-import com.twismart.wallpapershd.ui.base.BaseView
+import com.twismart.wallpapershd.ui.base.BaseContract
 
 /**
  * Created by sneyd on 5/16/2017.
@@ -9,9 +8,9 @@ import com.twismart.wallpapershd.ui.base.BaseView
 
 class WallpapersContract {
 
-    interface Presenter<V : WallpapersContract.View> : BasePresenter<V> {
+    interface Presenter<V : WallpapersContract.View> : BaseContract.Presenter<V> {
         fun setWallpaper(url: String)
     }
 
-    interface View : BaseView
+    interface View : BaseContract.View
 }

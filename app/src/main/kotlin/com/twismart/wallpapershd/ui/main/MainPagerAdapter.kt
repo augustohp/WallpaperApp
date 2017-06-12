@@ -20,10 +20,10 @@ class MainPagerAdapter(fragmentManager: FragmentManager, private val context: Co
     }
 
     override fun getItem(position: Int): Fragment {
-        when (position) {
-            0 -> return ListWallpapersFragment.newInstance(Constants.TypeListWallpapers.ALL.value)
-            1 -> return ListWallpapersFragment.newInstance(Constants.TypeListWallpapers.MOST_POPULAR.value)
-            else -> return ListWallpapersFragment.newInstance(Constants.TypeListWallpapers.MY_FAVORITES.value)
+        return when (position) {
+            0 -> ListWallpapersFragment.newInstance(Constants.TypeListWallpapers.ALL.value)
+            1 -> ListWallpapersFragment.newInstance(Constants.TypeListWallpapers.MOST_POPULAR.value)
+            else -> ListWallpapersFragment.newInstance(Constants.TypeListWallpapers.MY_FAVORITES.value)
         }
     }
 

@@ -1,13 +1,8 @@
 package com.twismart.wallpapershd.ui.wallpaper
 
-import android.app.WallpaperManager
 import android.content.Context
 import android.content.Intent
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.os.AsyncTask
 import android.support.v4.view.ViewPager
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.support.v7.widget.Toolbar
 import android.util.Log
@@ -19,11 +14,7 @@ import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.data.model.Wallpaper
 import com.twismart.wallpapershd.ui.base.BaseActivity
 import com.twismart.wallpapershd.utils.Constants
-
-import java.io.IOException
-import java.io.InputStream
-import java.net.HttpURLConnection
-import java.net.URL
+import com.twismart.wallpapershd.utils.debug
 import java.util.ArrayList
 
 import javax.inject.Inject
@@ -32,7 +23,6 @@ import hugo.weaving.DebugLog
 
 class WallpapersActivity : BaseActivity(), WallpapersContract.View {
 
-    val TAG = javaClass.simpleName
     var mViewPager: ViewPager? = null
     var wallpapersList: ArrayList<Wallpaper>? = null
 
@@ -41,9 +31,9 @@ class WallpapersActivity : BaseActivity(), WallpapersContract.View {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_wallpaper)
-        activityComponent?.inject(this)
+        activityComponent.inject(this)
         setUp()
-        mPresenter?.attachView(this)
+        mPresenter.attachView(this)
     }
 
     @DebugLog
@@ -76,7 +66,7 @@ class WallpapersActivity : BaseActivity(), WallpapersContract.View {
             android.R.id.home -> finish()
             R.id.menu_set_wallpaper -> {
                 val url = wallpapersList!![mViewPager!!.currentItem].urlImage
-                Log.d(TAG, "onOptionsItemSelected: urlImage " + url)
+                debug("onOptionsItemSelected: urlImage $url")
                 mPresenter.setWallpaper(url)
             }
         }

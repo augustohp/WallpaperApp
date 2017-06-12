@@ -6,14 +6,12 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import com.bumptech.glide.Glide
-import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.squareup.picasso.Picasso
 import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.data.model.Wallpaper
 import com.twismart.wallpapershd.ui.wallpaper.WallpapersActivity
-import com.twismart.wallpapershd.utils.CommonUtils
 import com.twismart.wallpapershd.utils.debug
+import com.twismart.wallpapershd.utils.getScreenWidth
 import java.util.ArrayList
 
 /**
@@ -22,7 +20,6 @@ import java.util.ArrayList
 
 class ListWallpapersRecyclerViewAdapter(private val context: Context) : RecyclerView.Adapter<ListWallpapersRecyclerViewAdapter.MyItemNewViewHolder>() {
 
-    private val TAG = javaClass.simpleName
     private var wallpaperList = ArrayList<Wallpaper>()
 
     fun setWallpaperList(wallpaperList: ArrayList<Wallpaper>) {
@@ -43,27 +40,17 @@ class ListWallpapersRecyclerViewAdapter(private val context: Context) : Recycler
     }
 
     inner class MyItemNewViewHolder(private val mView: View) : RecyclerView.ViewHolder(mView) {
-        val imageWallpaper: ImageView
 
-        init {
-            imageWallpaper = mView.findViewById(R.id.imageWallpaper) as ImageView
-        }
+        val imageWallpaper: ImageView by lazy { mView.findViewById(R.id.imageWallpaper) as ImageView }
 
         fun bindData(itemWallpaper: Wallpaper, position: Int) {
             debug("bindData $position")
 
             Picasso.with(context)
                     .load(itemWallpaper.urlImage)
-                    .resize(CommonUtils.getWitdhOfWallpaperInList(context), CommonUtils.getWitdhOfWallpaperInList(context))
+                    .resize(context.getScreenWidth().div(3), context.getScreenWidth().div(3))
                     .centerCrop()
                     .into(imageWallpaper)
-            /*
-            Glide.with(context)
-                    .load(itemWallpaper.urlImage)
-                    .asBitmap()
-                    .override(CommonUtils.getWitdhOfWallpaperInList(context), CommonUtils.getWitdhOfWallpaperInList(context))
-                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                    .into(imageWallpaper)*/
 
             mView.setOnClickListener { context.startActivity(WallpapersActivity.newIntent(context, wallpaperList, position)) }
             mView.setOnLongClickListener { false }

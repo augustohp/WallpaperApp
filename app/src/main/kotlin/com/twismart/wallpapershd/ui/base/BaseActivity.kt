@@ -10,20 +10,18 @@ import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.inputmethod.InputMethodManager
-
-import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.WallpaperApplication
 import com.twismart.wallpapershd.di.component.ActivityComponent
 import com.twismart.wallpapershd.di.component.DaggerActivityComponent
 import com.twismart.wallpapershd.di.module.ActivityModule
-import com.twismart.wallpapershd.utils.CommonUtils
-import com.twismart.wallpapershd.utils.NetworkUtils
+import com.twismart.wallpapershd.utils.isNetworkConnected
+import com.twismart.wallpapershd.utils.showLoadingDialog
 
-abstract class BaseActivity : AppCompatActivity(), BaseView {
+abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
 
     var mProgressDialog: ProgressDialog? = null
 
-    var activityComponent: ActivityComponent? = null
+    lateinit var activityComponent: ActivityComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +30,6 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
                 .applicationComponent((application as WallpaperApplication).component)
                 .build()
     }
-
 
     @TargetApi(Build.VERSION_CODES.M)
     fun requestPermissionsSafely(permissions: Array<String>, requestCode: Int) {
@@ -48,7 +45,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
 
     override fun showLoading() {
         hideLoading()
-        mProgressDialog = CommonUtils.showLoadingDialog(this)
+        mProgressDialog = showLoadingDialog(this)
     }
 
     override fun hideLoading() {
@@ -59,22 +56,13 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
         }
     }
 
-    override fun onError(message: String) {
-        showSnackBar(message)
-    }
+    override fun onError(message: String) = showSnackBar(message)
 
-    private fun showSnackBar(message: String) {
-        val snackbar = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT)
-        snackbar.show()
-    }
+    fun showSnackBar(message: String) = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show()
 
-    override fun onError(@StringRes resId: Int) {
-        onError(getString(resId))
-    }
+    override fun onError(@StringRes resId: Int) = onError(getString(resId))
 
-    override fun isNetworkConnected(): Boolean {
-        return NetworkUtils.isNetworkConnected(applicationContext)
-    }
+    override fun isNetworkConnected() = applicationContext.isNetworkConnected()
 
     override fun hideKeyboard() {
         val view = this.currentFocus
@@ -84,9 +72,7 @@ abstract class BaseActivity : AppCompatActivity(), BaseView {
         }
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-    }
+    override fun onDestroy() = super.onDestroy()
 
     protected abstract fun setUp()
 }
