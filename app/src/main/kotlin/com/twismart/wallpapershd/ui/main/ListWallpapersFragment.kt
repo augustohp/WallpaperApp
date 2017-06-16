@@ -1,10 +1,8 @@
 package com.twismart.wallpapershd.ui.main
 
-import android.content.Context
-import android.net.Uri
 import android.os.Bundle
-import android.support.v7.appcompat.BuildConfig
 import android.support.v7.widget.GridLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,9 +10,7 @@ import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.data.model.Wallpaper
 import com.twismart.wallpapershd.ui.base.BaseFragment
 import com.twismart.wallpapershd.utils.Constants
-import com.twismart.wallpapershd.utils.debug
 import com.twismart.wallpapershd.utils.inflate
-import java.util.ArrayList
 import kotlinx.android.synthetic.main.fragment_list_wallpapers.*
 import javax.inject.Inject
 
@@ -31,11 +27,10 @@ class ListWallpapersFragment : BaseFragment(), ListWallpapersContract.View {
         }
     }
 
-    var mListener: OnFragmentInteractionListener? = null
+    @Inject lateinit var mPresenter: ListWallpapersPresenter<ListWallpapersContract.View>
+
     var mWallpapersRecyclerViewAdapter: ListWallpapersRecyclerViewAdapter? = null
     var typeListWallpapers: String? = null
-
-    @Inject lateinit var mPresenter: ListWallpapersPresenter<ListWallpapersContract.View>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,37 +55,23 @@ class ListWallpapersFragment : BaseFragment(), ListWallpapersContract.View {
         mWallpapersRecyclerViewAdapter = ListWallpapersRecyclerViewAdapter(context)
         recyclerViewWallpapers.adapter = mWallpapersRecyclerViewAdapter
 
-        if (typeListWallpapers == Constants.TypeListWallpapers.ALL.value) {
-            if (BuildConfig.DEBUG) {
-                debug("typelist all")
-            } else {
-                debug("typelist all nodebug ")
+        mPresenter.attachView(this)
+        when (typeListWallpapers) {
+            Constants.TypeListWallpapers.ALL.value -> {
+                mPresenter.getWallpapersList()
             }
-            mPresenter.attachView(this)
-            mPresenter.getWallpapersList()
+            Constants.TypeListWallpapers.MY_FAVORITES.value -> {
+                mPresenter.getAllFavoriteWallpapers()
+            }
         }
     }
 
-    override fun setWallpaperList(wallpaperList: ArrayList<Wallpaper>) {
+    override fun setWallpaperList(wallpaperList: List<Wallpaper>) {
         mWallpapersRecyclerViewAdapter?.setWallpaperList(wallpaperList)
     }
 
-    override fun onAttach(context: Context?) {
-        super.onAttach(context)
-        if (context is OnFragmentInteractionListener) {
-            mListener = context as OnFragmentInteractionListener?
-        } else {
-            //throw new RuntimeException(context.toString() + " must implement OnFragmentInteractionListener");
-        }
-    }
-
     override fun onDetach() {
-        mListener = null
         mPresenter.dettachView()
         super.onDetach()
-    }
-
-    interface OnFragmentInteractionListener {
-        fun onFragmentInteraction(uri: Uri)
     }
 }

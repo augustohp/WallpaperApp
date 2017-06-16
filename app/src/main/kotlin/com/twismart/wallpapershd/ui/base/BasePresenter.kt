@@ -10,8 +10,8 @@ import io.reactivex.disposables.CompositeDisposable
  * Created by sneyd on 5/5/2017.
  **/
 
-open class BasePresenter<V : BaseContract.View> @Inject
-constructor(val dataManager: DataManager, val compositeDisposable: CompositeDisposable) : BaseContract.Presenter<V> {
+open class BasePresenter<V : BaseContract.View>
+@Inject constructor(val dataManager: DataManager, val compositeDisposable: CompositeDisposable) : BaseContract.Presenter<V> {
 
     var baseView: V? = null
 

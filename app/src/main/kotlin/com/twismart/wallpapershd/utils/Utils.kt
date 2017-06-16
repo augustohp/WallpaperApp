@@ -6,10 +6,7 @@ import android.app.NotificationManager
 import android.app.ProgressDialog
 import android.content.Context
 import android.content.res.Resources
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
 import android.graphics.Color
-import android.graphics.Point
 import android.graphics.drawable.ColorDrawable
 import android.net.ConnectivityManager
 import android.os.Environment
@@ -24,7 +21,6 @@ import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
-import java.net.URL
 import java.util.regex.Pattern
 
 /**
@@ -32,15 +28,15 @@ import java.util.regex.Pattern
 * */
 
 
-fun Any.debug(msg: Any? = "Debug", tag: String = this.javaClass.toString()){
+fun Any.debug(msg: Any? = "Debug", tag: String = this.javaClass.simpleName){
     Log.d(tag, msg.toString())
 }
 
-fun Any.warn(msg: Any? = "Warn", tag: String = this.javaClass.toString()){
+fun Any.warn(msg: Any? = "Warn", tag: String = this.javaClass.simpleName){
     Log.w(tag, msg.toString())
 }
 
-fun Any.error(msg: Any? = "Error", tag: String = this.javaClass.toString()){
+fun Any.error(msg: Any? = "Error", tag: String = this.javaClass.simpleName){
     Log.e(tag, msg.toString())
 }
 
@@ -50,7 +46,6 @@ fun Context.toast(text: String, duration: Int = Toast.LENGTH_SHORT){
 fun Context.toast(@StringRes resId: Int, duration: Int = Toast.LENGTH_SHORT){
     Toast.makeText(this, resId, duration).show()
 }
-
 
 fun View.setWidth(width: Int) {
     val params = layoutParams
@@ -177,4 +172,10 @@ fun Context.showSoftInput(edit: EditText) {
 fun Context.toggleSoftInput() {
     val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+}
+
+fun <T>List<T>.showValues(){
+    debug("Showing values of a list with ${count()} items")
+    forEach { debug(it) }
+    debug("All the values have been showed")
 }

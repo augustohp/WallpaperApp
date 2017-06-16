@@ -2,6 +2,9 @@ package com.twismart.wallpapershd.di.module
 
 import android.app.Application
 import android.content.Context
+import com.twismart.wallpapershd.data.local.database.IMyDatabaseHelper
+import com.twismart.wallpapershd.data.local.database.MyDataBase
+import com.twismart.wallpapershd.data.local.database.MyDatabaseHelper
 
 
 import com.twismart.wallpapershd.data.remote.WallpaperService
@@ -17,13 +20,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 @Module class ApplicationModule(val mApplication: Application) {
 
-    @Provides fun provideContext(): Context {
-        return mApplication
-    }
+    @Provides @ApplicationContext fun provideContext(): Context =  mApplication
 
-    @Provides fun provideApplication(): Application {
-        return mApplication
-    }
+    @Provides fun provideApplication(): Application = mApplication
 
     @Provides @Singleton fun provideRetrofit(): Retrofit {
         return Retrofit.Builder()
@@ -33,7 +32,9 @@ import retrofit2.converter.gson.GsonConverterFactory
                 .build()
     }
 
-    @Provides @Singleton fun provideWallpaperService(): WallpaperService {
-        return WallpaperService.Factory.create()
-    }
+    @Provides @Singleton fun provideWallpaperService(): WallpaperService = provideRetrofit().create(WallpaperService::class.java)
+
+    @Provides @Singleton fun provideMyDataBase(): MyDataBase = MyDataBase(provideContext(), MyDataBase.DATABASE_NAME, null, MyDataBase.VERSION)
+
+    @Provides @Singleton fun providesIMyDatabaseHelper(myDatabaseHelper: MyDatabaseHelper): IMyDatabaseHelper = myDatabaseHelper
 }

@@ -9,7 +9,7 @@ import android.widget.ImageView
 import com.squareup.picasso.Picasso
 import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.data.model.Wallpaper
-import com.twismart.wallpapershd.ui.wallpaper.WallpapersActivity
+import com.twismart.wallpapershd.ui.wallpaper.activity.WallpapersActivity
 import com.twismart.wallpapershd.utils.debug
 import com.twismart.wallpapershd.utils.getScreenWidth
 import java.util.ArrayList
@@ -20,9 +20,9 @@ import java.util.ArrayList
 
 class ListWallpapersRecyclerViewAdapter(private val context: Context) : RecyclerView.Adapter<ListWallpapersRecyclerViewAdapter.MyItemNewViewHolder>() {
 
-    private var wallpaperList = ArrayList<Wallpaper>()
+    private var wallpaperList: List<Wallpaper> = ArrayList()
 
-    fun setWallpaperList(wallpaperList: ArrayList<Wallpaper>) {
+    fun setWallpaperList(wallpaperList: List<Wallpaper>) {
         this.wallpaperList = wallpaperList
         notifyDataSetChanged()
     }

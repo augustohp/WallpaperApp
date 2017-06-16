@@ -15,9 +15,7 @@ class MainPagerAdapter(fragmentManager: FragmentManager, private val context: Co
 
     private val titleFragments = intArrayOf(R.string.title_tab_all, R.string.title_tab_most_popular, R.string.title_tab_my_favorites)
 
-    override fun getCount(): Int {
-        return titleFragments.size
-    }
+    override fun getCount() = titleFragments.size
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
@@ -27,7 +25,5 @@ class MainPagerAdapter(fragmentManager: FragmentManager, private val context: Co
         }
     }
 
-    override fun getPageTitle(position: Int): CharSequence {
-        return context.getString(titleFragments[position])
-    }
+    override fun getPageTitle(position: Int) = context.getString(titleFragments[position])
 }

@@ -1,14 +1,12 @@
 package com.twismart.wallpapershd.di.module
 
 import android.app.Activity
-import android.content.Context
-import com.twismart.wallpapershd.di.annotation.ActivityContext
 import com.twismart.wallpapershd.di.annotation.PerActivity
 
 import com.twismart.wallpapershd.ui.main.ListWallpapersContract
 import com.twismart.wallpapershd.ui.main.ListWallpapersPresenter
-import com.twismart.wallpapershd.ui.wallpaper.WallpapersContract
-import com.twismart.wallpapershd.ui.wallpaper.WallpapersPresenter
+import com.twismart.wallpapershd.ui.wallpaper.activity.WallpapersContract
+import com.twismart.wallpapershd.ui.wallpaper.activity.WallpapersPresenter
 
 import dagger.Module
 import dagger.Provides

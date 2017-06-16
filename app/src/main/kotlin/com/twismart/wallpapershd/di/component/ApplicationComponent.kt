@@ -5,7 +5,9 @@ import android.content.Context
 
 import com.twismart.wallpapershd.WallpaperApplication
 import com.twismart.wallpapershd.data.DataManager
+import com.twismart.wallpapershd.data.local.database.MyDataBase
 import com.twismart.wallpapershd.data.remote.WallpaperService
+import com.twismart.wallpapershd.di.annotation.ApplicationContext
 import com.twismart.wallpapershd.di.module.ApplicationModule
 import javax.inject.Singleton
 import dagger.Component
@@ -17,7 +19,7 @@ interface ApplicationComponent {
 
     fun inject(app: WallpaperApplication)
 
-    fun context(): Context
+    @ApplicationContext fun context(): Context
 
     fun application(): Application
 
@@ -26,4 +28,6 @@ interface ApplicationComponent {
     fun wallpaperService(): WallpaperService
 
     fun dataManager(): DataManager
+
+    fun MyDataBase(): MyDataBase
 }

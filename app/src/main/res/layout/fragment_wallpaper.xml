@@ -4,11 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.twismart.wallpapershd.ui.wallpaper.WallpapersActivity">
+    tools:context="com.twismart.wallpapershd.ui.wallpaper.activity.WallpapersActivity">
 
     <ImageView
         android:id="@+id/imageWallpaper"
         android:layout_width="match_parent"
         android:layout_height="match_parent" />
+
+
+    <ImageView
+        android:id="@+id/imageSwitchFavorite"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_gravity="bottom|end"
+        android:src="@drawable/ic_favorite"
+        android:tint="#ffffff"/>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -4,7 +4,6 @@ import android.os.Parcel
 import android.os.Parcelable
 import com.google.gson.annotations.Expose
 import com.google.gson.annotations.SerializedName
-import java.io.Serializable
 
 /**
  * Created by sneyd on 4/13/2017.
@@ -16,7 +15,10 @@ data class Wallpaper(
         @SerializedName("image_path") @Expose var pathImage: String,
         @SerializedName("width") @Expose var width: String,
         @SerializedName("height") @Expose var height: String,
-        @SerializedName("license") @Expose var license: String) : Parcelable {
+        @SerializedName("license") @Expose var license: String,
+        @SerializedName("rating") @Expose var rating: String,
+        var isFavorite: Boolean = false) : Parcelable {
+
     companion object {
         @JvmField val CREATOR: Parcelable.Creator<Wallpaper> = object : Parcelable.Creator<Wallpaper> {
             override fun createFromParcel(source: Parcel): Wallpaper = Wallpaper(source)
@@ -30,7 +32,9 @@ data class Wallpaper(
     source.readString(),
     source.readString(),
     source.readString(),
-    source.readString()
+    source.readString(),
+    source.readString(),
+    1 == source.readInt()
     )
 
     override fun describeContents() = 0
@@ -42,5 +46,7 @@ data class Wallpaper(
         dest.writeString(width)
         dest.writeString(height)
         dest.writeString(license)
+        dest.writeString(rating)
+        dest.writeInt((if (isFavorite) 1 else 0))
     }
 }

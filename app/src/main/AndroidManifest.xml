@@ -39,7 +39,7 @@
         </activity>
 
         <activity
-            android:name=".ui.wallpaper.WallpapersActivity"
+            android:name=".ui.wallpaper.activity.WallpapersActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <meta-data

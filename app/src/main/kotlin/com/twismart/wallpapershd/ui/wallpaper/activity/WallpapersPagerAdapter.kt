@@ -1,14 +1,10 @@
-package com.twismart.wallpapershd.ui.wallpaper
-
-import android.content.Context
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+package com.twismart.wallpapershd.ui.wallpaper.activity
 
 import com.twismart.wallpapershd.data.model.Wallpaper
-import com.twismart.wallpapershd.ui.wallpaper.WallpaperFragment
-
-import java.util.ArrayList
+import com.twismart.wallpapershd.ui.wallpaper.fragment.WallpaperFragment
+import android.content.Context
+import android.support.v4.app.FragmentManager
+import android.support.v4.app.FragmentPagerAdapter
 
 /**
  * Created by sneyd on 4/19/2017.
@@ -16,7 +12,7 @@ import java.util.ArrayList
 
 class WallpapersPagerAdapter(fragmentManager: FragmentManager, val context: Context, val wallpaperList: ArrayList<Wallpaper>?) : FragmentPagerAdapter(fragmentManager) {
 
-    override fun getItem(position: Int) = WallpaperFragment.newInstance(wallpaperList!![position])
+    override fun getItem(position: Int) = WallpaperFragment.Companion.newInstance(wallpaperList!![position], position)
 
     override fun getCount() = wallpaperList?.size ?: 0
 }
