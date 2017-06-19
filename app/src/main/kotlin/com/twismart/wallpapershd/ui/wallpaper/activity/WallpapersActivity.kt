@@ -9,6 +9,7 @@ import com.twismart.wallpapershd.utils.Constants
 import com.twismart.wallpapershd.utils.debug
 import android.content.Context
 import android.os.Bundle
+import com.twismart.wallpapershd.utils.toAbsoluteValue
 import hugo.weaving.DebugLog
 import kotlinx.android.synthetic.main.activity_wallpaper.*
 import javax.inject.Inject
@@ -30,7 +31,7 @@ class WallpapersActivity : com.twismart.wallpapershd.ui.base.BaseActivity(), Wal
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(com.twismart.wallpapershd.R.layout.activity_wallpaper)
+        setContentView(R.layout.activity_wallpaper)
         activityComponent.inject(this)
         mPresenter.attachView(this)
         setUp()
@@ -38,34 +39,29 @@ class WallpapersActivity : com.twismart.wallpapershd.ui.base.BaseActivity(), Wal
 
     @DebugLog
     override fun setUp() {
-        debug("setUp")
         setSupportActionBar(toolbar)
-
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         wallpapersList = intent?.getParcelableArrayListExtra<Wallpaper>(Constants.WALLPAPERS_LIST)
         mViewPager.adapter = WallpapersPagerAdapter(supportFragmentManager, applicationContext, wallpapersList)
         var currentItem = intent.getIntExtra(Constants.WALLPAPER_TO_SHOW, 0)
         //set and show the wallpaper selected
-        debug("current $currentItem")
         mViewPager.currentItem = currentItem
         mViewPager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
             override fun onPageScrollStateChanged(p0: Int) {}
             override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {}
             override fun onPageSelected(position: Int) {
-                debug("OnPageSelected $position")
                 currentItem = position
                 val wallpaperFragment = mViewPager.adapter.instantiateItem(mViewPager, position) as WallpaperFragment
-                debug("wallpaperFragment url ${wallpaperFragment.mWallpaper.urlImage}")
                 mPresenter.checkIfWallpaperIsFavorite(wallpaperFragment.mWallpaper.id, position)
             }
         })
         //the checking should be after the post once the fragment is instanced and ready to be used
         mViewPager.post {
-            debug("mViewPager post")
             mPresenter.checkIfWallpaperIsFavorite(intent.getParcelableArrayListExtra<Wallpaper>(Constants.WALLPAPERS_LIST)[currentItem].id, currentItem)
         }
     }
+
 
     //My View methods
     override fun wallpaperIsInFavorites(positionFragment: Int) {
@@ -76,6 +72,22 @@ class WallpapersActivity : com.twismart.wallpapershd.ui.base.BaseActivity(), Wal
     override fun wallpaperIsNotInFavorites(positionFragment: Int) {
         val wallpaperFragment = mViewPager.adapter.instantiateItem(mViewPager, positionFragment) as WallpaperFragment
         wallpaperFragment.wallpaperIsNotInFavorites()
+    }
+
+    override fun loadingWallpaper(positionFragment: Int) {
+        if((mViewPager.currentItem - positionFragment).toAbsoluteValue() <= 1) {
+            debug("loadingWallpaper")
+            val wallpaperFragment = mViewPager.adapter.instantiateItem(mViewPager, positionFragment) as WallpaperFragment
+            wallpaperFragment.loadingWallpaper()
+        }
+    }
+
+    override fun readyWallpaper(positionFragment: Int) {
+        if((mViewPager.currentItem - positionFragment).toAbsoluteValue() <= 1) {
+            debug("readyWallpaper")
+            val wallpaperFragment = mViewPager.adapter.instantiateItem(mViewPager, positionFragment) as WallpaperFragment
+            wallpaperFragment.readyWallpaper()
+        }
     }
 
     //WallpaperFragment Listener
@@ -96,11 +108,13 @@ class WallpapersActivity : com.twismart.wallpapershd.ui.base.BaseActivity(), Wal
 
     override fun onOptionsItemSelected(item: android.view.MenuItem): Boolean {
         when (item.itemId) {
-            android.R.id.home -> finish()
+            android.R.id.home -> {
+                finish()
+            }
             R.id.menu_set_wallpaper -> {
                 val url = wallpapersList!![mViewPager!!.currentItem].urlImage
                 debug("onOptionsItemSelected: urlImage $url")
-                mPresenter.setWallpaperFromUrl(url)
+                mPresenter.setWallpaperFromUrl(url, mViewPager!!.currentItem)
             }
         }
         return super.onOptionsItemSelected(item)
@@ -108,7 +122,7 @@ class WallpapersActivity : com.twismart.wallpapershd.ui.base.BaseActivity(), Wal
 
     override fun onDestroy() {
         super.onDestroy()
-        mPresenter.dettachView()
+        mPresenter.detachView()
         debug("activity onDestroy")
     }
 }

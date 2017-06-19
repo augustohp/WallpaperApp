@@ -2,7 +2,6 @@ package com.twismart.wallpapershd.ui.main
 
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
-import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -41,7 +40,7 @@ class ListWallpapersFragment : BaseFragment(), ListWallpapersContract.View {
 
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activityComponent.inject(this)
+        activityComponent?.inject(this)
 
         return context?.inflate(R.layout.fragment_list_wallpapers, container)
     }
@@ -49,29 +48,43 @@ class ListWallpapersFragment : BaseFragment(), ListWallpapersContract.View {
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
 
-        recyclerViewWallpapers.setHasFixedSize(true)
-        recyclerViewWallpapers.layoutManager = GridLayoutManager(context, 3)
-
-        mWallpapersRecyclerViewAdapter = ListWallpapersRecyclerViewAdapter(context)
-        recyclerViewWallpapers.adapter = mWallpapersRecyclerViewAdapter
-
         mPresenter.attachView(this)
+
+        recyclerViewWallpapers.apply {
+            setHasFixedSize(true)// improve performance
+            layoutManager = GridLayoutManager(context, 3)// set grid layout manager
+            mWallpapersRecyclerViewAdapter = ListWallpapersRecyclerViewAdapter(context)// create recyclerViewAdapter
+            adapter = mWallpapersRecyclerViewAdapter// set recyclerViewAdapter to recyclerView
+        }
+
+        refreshContent()
+
+        swipeRefresh.setOnRefreshListener {
+            refreshContent()
+        }
+    }
+
+    fun refreshContent(){
         when (typeListWallpapers) {
             Constants.TypeListWallpapers.ALL.value -> {
                 mPresenter.getWallpapersList()
             }
+            Constants.TypeListWallpapers.MOST_POPULAR.value -> {
+                mPresenter.getMostPopularWallpapers()
+            }
             Constants.TypeListWallpapers.MY_FAVORITES.value -> {
-                mPresenter.getAllFavoriteWallpapers()
+                mPresenter.getFavoriteWallpapers()
             }
         }
     }
 
-    override fun setWallpaperList(wallpaperList: List<Wallpaper>) {
+    override fun setWallpaperList(wallpaperList: ArrayList<Wallpaper>) {
         mWallpapersRecyclerViewAdapter?.setWallpaperList(wallpaperList)
+        swipeRefresh.isRefreshing = false
     }
 
     override fun onDetach() {
-        mPresenter.dettachView()
+        mPresenter.detachView()
         super.onDetach()
     }
 }

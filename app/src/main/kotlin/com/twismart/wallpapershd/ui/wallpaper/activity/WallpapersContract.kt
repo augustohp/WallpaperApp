@@ -10,7 +10,7 @@ import com.twismart.wallpapershd.ui.base.BaseContract
 class WallpapersContract {
 
     interface Presenter<V : View> : BaseContract.Presenter<V> {
-        fun setWallpaperFromUrl(url: String)
+        fun setWallpaperFromUrl(url: String, positionFragment: Int)
         fun checkIfWallpaperIsFavorite(idWallpaper: String, positionFragment: Int)
         fun addWallpaperToFavorites(wallpaperToFavorites: Wallpaper, positionFragment: Int)
         fun deleteWallpaperFromFavorites(id: String, positionFragment: Int)
@@ -19,5 +19,7 @@ class WallpapersContract {
     interface View : BaseContract.View {
         fun wallpaperIsInFavorites(positionFragment: Int)
         fun wallpaperIsNotInFavorites(positionFragment: Int)
+        fun loadingWallpaper(positionFragment: Int)
+        fun readyWallpaper(positionFragment: Int)
     }
 }

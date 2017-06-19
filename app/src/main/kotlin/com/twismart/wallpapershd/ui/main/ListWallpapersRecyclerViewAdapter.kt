@@ -1,6 +1,9 @@
 package com.twismart.wallpapershd.ui.main
 
+import android.annotation.TargetApi
+import android.app.ActivityOptions
 import android.content.Context
+import android.graphics.drawable.BitmapDrawable
 import android.support.v7.widget.RecyclerView
 import android.view.LayoutInflater
 import android.view.View
@@ -11,7 +14,9 @@ import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.data.model.Wallpaper
 import com.twismart.wallpapershd.ui.wallpaper.activity.WallpapersActivity
 import com.twismart.wallpapershd.utils.debug
+import com.twismart.wallpapershd.utils.getScreenHeight
 import com.twismart.wallpapershd.utils.getScreenWidth
+import com.twismart.wallpapershd.utils.isJellyBeanOrLater
 import java.util.ArrayList
 
 /**
@@ -20,9 +25,9 @@ import java.util.ArrayList
 
 class ListWallpapersRecyclerViewAdapter(private val context: Context) : RecyclerView.Adapter<ListWallpapersRecyclerViewAdapter.MyItemNewViewHolder>() {
 
-    private var wallpaperList: List<Wallpaper> = ArrayList()
+    private var wallpaperList: ArrayList<Wallpaper> = ArrayList()
 
-    fun setWallpaperList(wallpaperList: List<Wallpaper>) {
+    fun setWallpaperList(wallpaperList: ArrayList<Wallpaper>) {
         this.wallpaperList = wallpaperList
         notifyDataSetChanged()
     }
@@ -43,6 +48,7 @@ class ListWallpapersRecyclerViewAdapter(private val context: Context) : Recycler
 
         val imageWallpaper: ImageView by lazy { mView.findViewById(R.id.imageWallpaper) as ImageView }
 
+        @TargetApi(16)
         fun bindData(itemWallpaper: Wallpaper, position: Int) {
             debug("bindData $position")
 
@@ -52,7 +58,20 @@ class ListWallpapersRecyclerViewAdapter(private val context: Context) : Recycler
                     .centerCrop()
                     .into(imageWallpaper)
 
-            mView.setOnClickListener { context.startActivity(WallpapersActivity.newIntent(context, wallpaperList, position)) }
+            mView.setOnClickListener {
+                if(isJellyBeanOrLater()){
+                    try {
+                        context.startActivity(WallpapersActivity.newIntent(context, wallpaperList, position),
+                                ActivityOptions.makeThumbnailScaleUpAnimation(mView, (imageWallpaper.drawable as BitmapDrawable).bitmap, 0, 0).toBundle())
+                    }
+                    catch (e: Exception){
+                        context.startActivity(WallpapersActivity.newIntent(context, wallpaperList, position))
+                    }
+                }
+                else{
+                    context.startActivity(WallpapersActivity.newIntent(context, wallpaperList, position))
+                }
+            }
             mView.setOnLongClickListener { false }
         }
     }

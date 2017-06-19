@@ -6,13 +6,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.animation.Animation
+import android.view.animation.AnimationUtils
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.engine.DiskCacheStrategy
 import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.data.model.Wallpaper
 import com.twismart.wallpapershd.ui.base.BaseFragment
-import com.twismart.wallpapershd.utils.debug
-import com.twismart.wallpapershd.utils.inflate
+import com.twismart.wallpapershd.utils.*
 import kotlinx.android.synthetic.main.fragment_wallpaper.*
 
 
@@ -36,10 +37,6 @@ class WallpaperFragment : BaseFragment(){
     var positionFragment: Int = 0
     var mListener: OnWallpaperFragmentListener? = null
 
-    // Dimensions used for the wallpaper
-    private var widthEnd = 0f
-    private var heightEnd = 0f
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mWallpaper = arguments.getParcelable(ARG_WALLPAPER)
@@ -48,7 +45,7 @@ class WallpaperFragment : BaseFragment(){
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        activityComponent.inject(this)
+        activityComponent?.inject(this)
         debug("WallpaperFragment onCreateView id ${mWallpaper.id}")
         return context?.inflate(R.layout.fragment_wallpaper, container)
     }
@@ -58,30 +55,20 @@ class WallpaperFragment : BaseFragment(){
         debug("WallpaperFragment onActivityCreated id ${mWallpaper.id}")
         // It's necessary use post method because of other way this would cause error due to imageWallpaper.getWidth() or getHeight() == 0
         imageWallpaper.post {
-            try {
-                // Calculate the width and height in order to fit the image correctly
-                val widthWallpaper = mWallpaper.width.toFloat()
-                val heightWallpaper = mWallpaper.height.toFloat()
+            // Calculate the width and height in order to fit the image correctly
+            val (widthEnd, heightEnd) = calculateDimensions()
 
-                if (widthWallpaper > heightWallpaper) {
-                    widthEnd = imageWallpaper.width.toFloat()
-                    heightEnd = heightWallpaper / widthWallpaper * widthEnd
-                } else {
-                    heightEnd = imageWallpaper.height.toFloat()
-                    widthEnd = widthWallpaper / heightWallpaper * heightEnd
-                }
-                // Pick up whether the image comes from a url or a path
-                debug("onActivityCreated: widthEnd $widthEnd heightEnd $heightEnd")
-                val sourceImage = if (mWallpaper.urlImage.isEmpty()) mWallpaper.pathImage else mWallpaper.urlImage
-                Glide.with(context)
-                        .load(sourceImage)
-                        .asBitmap()
-                        .override(widthEnd.toInt(), heightEnd.toInt())
-                        .diskCacheStrategy(DiskCacheStrategy.RESULT)
-                        .into(imageWallpaper)
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
+            // Pick up whether the image comes from a url or a path
+            debug("onActivityCreated: widthEnd $widthEnd heightEnd $heightEnd")
+            val sourceImage = if (mWallpaper.urlImage.isEmpty()) mWallpaper.pathImage else mWallpaper.urlImage
+            Glide.with(context)
+                    .load(sourceImage)
+                    .asBitmap()
+                    .override(widthEnd, heightEnd)
+                    .diskCacheStrategy(DiskCacheStrategy.RESULT)
+                    .into(imageWallpaper)
+            imageWallpaper.setDimensions(widthEnd, heightEnd)
+            frameWrapper.setDimensions(widthEnd, heightEnd)
         }
 
         imageSwitchFavorite.setOnClickListener {
@@ -93,6 +80,47 @@ class WallpaperFragment : BaseFragment(){
                 mListener?.onClickFavorite(mWallpaper, positionFragment)
             }
         }
+    }
+
+    fun calculateDimensions(): Pair<Int, Int>{
+        var widthEnd: Float
+        var heightEnd: Float
+
+        val widthWallpaper = mWallpaper.width.toFloat()
+        val heightWallpaper = mWallpaper.height.toFloat()
+
+        val imageViewWidth = imageWallpaper.width.toFloat()
+        val imageViewHeight = imageWallpaper.height.toFloat()
+
+        if (widthWallpaper > heightWallpaper) {
+            widthEnd = imageViewWidth
+            heightEnd = (heightWallpaper / widthWallpaper) * widthEnd
+        } else {
+            heightEnd = imageViewHeight
+            widthEnd = (widthWallpaper / heightWallpaper) * heightEnd
+        }
+
+        if(widthEnd > imageViewWidth){
+            widthEnd = imageViewWidth
+            heightEnd = (heightWallpaper / widthWallpaper) * widthEnd
+        }
+        else if(heightEnd > imageViewHeight){
+            heightEnd = imageViewHeight
+            widthEnd = (widthWallpaper / heightWallpaper) * heightEnd
+        }
+        return widthEnd.toInt() to heightEnd.toInt()
+    }
+
+    val animation: Animation by lazy { AnimationUtils.loadAnimation(context, R.anim.move_right) }
+
+    fun loadingWallpaper(){
+        indicator.visible()
+        indicator.startAnimation(animation)
+    }
+
+    fun readyWallpaper(){
+        indicator.clearAnimation()
+        indicator.gone()
     }
 
     override fun onAttach(context: Context?) {

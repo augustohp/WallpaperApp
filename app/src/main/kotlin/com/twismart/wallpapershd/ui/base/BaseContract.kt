@@ -8,16 +8,18 @@ import android.support.annotation.StringRes
 
 class BaseContract{
     interface Presenter<V> {
-        fun attachView(view: V)
-        fun dettachView()
+        fun attachView(view: V): Unit
+        fun detachView(): Unit
     }
 
     interface View {
-        fun showLoading()
-        fun hideLoading()
-        fun onError(@StringRes resId: Int)
-        fun onError(message: String)
+        fun showLoading(): Unit
+        fun hideLoading(): Unit
+        fun showToast(@StringRes resId: Int): Unit
+        fun showToast(message: String): Unit
+        fun showSnackBar(message: String): Unit
+        fun showSnackBar(@StringRes resId: Int): Unit
         fun isNetworkConnected() : Boolean
-        fun hideKeyboard()
+        fun hideKeyboard(): Unit
     }
 }

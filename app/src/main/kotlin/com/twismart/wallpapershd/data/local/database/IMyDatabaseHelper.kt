@@ -9,6 +9,6 @@ import io.reactivex.Observable
 interface IMyDatabaseHelper {
     fun addWallpaperToFavorites(wallpaper: Wallpaper): Observable<Unit>
     fun deleteWallpaperFromFavorites(id: String): Observable<Unit>
-    fun loadAllFavoriteWallpapers(): Observable<List<Wallpaper>>
+    fun loadFavoriteWallpapers(): Observable<ArrayList<Wallpaper>>
     fun loadWallpaperFromFavorites(id: String): Observable<Wallpaper?>
 }

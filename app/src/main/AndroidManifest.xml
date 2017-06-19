@@ -45,6 +45,7 @@
         <meta-data
             android:name="io.fabric.ApiKey"
             android:value="93e9f12201ebc50c3a88a5b6914799556a228bfd" />
+
     </application>
 
     <meta-data android:name=".utils.GlideConfiguration"

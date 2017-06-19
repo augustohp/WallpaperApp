@@ -12,9 +12,9 @@ import com.twismart.wallpapershd.di.component.ActivityComponent
 
 abstract class BaseFragment : Fragment(), BaseContract.View {
 
-    lateinit var baseActivity: BaseActivity
+    var baseActivity: BaseActivity? = null
 
-    val activityComponent: ActivityComponent by lazy{ baseActivity.activityComponent }
+    val activityComponent: ActivityComponent? by lazy{ baseActivity?.activityComponent }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
@@ -23,15 +23,19 @@ abstract class BaseFragment : Fragment(), BaseContract.View {
         }
     }
 
-    override fun showLoading() = baseActivity.showLoading()
+    override fun showLoading() { baseActivity?.showLoading() }
 
-    override fun hideLoading() = baseActivity.hideLoading()
+    override fun hideLoading() { baseActivity?.hideLoading() }
 
-    override fun onError(@StringRes resId: Int) = baseActivity.onError(resId)
+    override fun showToast(resId: Int) { baseActivity?.showToast(resId)}
 
-    override fun onError(message: String) = baseActivity.onError(message)
+    override fun showToast(message: String) { baseActivity?.showToast(message) }
 
-    override fun isNetworkConnected() = baseActivity.isNetworkConnected()
+    override fun showSnackBar(message: String) { baseActivity?.showSnackBar(message) }
 
-    override fun hideKeyboard() = baseActivity.hideKeyboard()
+    override fun showSnackBar(resId: Int) { baseActivity?.showSnackBar(resId) }
+
+    override fun isNetworkConnected() = baseActivity?.isNetworkConnected() ?: false
+
+    override fun hideKeyboard() { baseActivity?.hideKeyboard() }
 }

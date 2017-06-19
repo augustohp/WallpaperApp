@@ -6,8 +6,6 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.support.annotation.StringRes
-import android.support.design.widget.Snackbar
 import android.support.v7.app.AppCompatActivity
 import android.view.inputmethod.InputMethodManager
 import com.twismart.wallpapershd.WallpaperApplication
@@ -16,6 +14,8 @@ import com.twismart.wallpapershd.di.component.DaggerActivityComponent
 import com.twismart.wallpapershd.di.module.ActivityModule
 import com.twismart.wallpapershd.utils.isNetworkConnected
 import com.twismart.wallpapershd.utils.showLoadingDialog
+import com.twismart.wallpapershd.utils.snackBar
+import com.twismart.wallpapershd.utils.toast
 
 abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
 
@@ -45,22 +45,21 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
 
     override fun showLoading() {
         hideLoading()
-        mProgressDialog = showLoadingDialog(this)
+        mProgressDialog = showLoadingDialog()
     }
 
     override fun hideLoading() {
-        mProgressDialog?.let {
-            if (mProgressDialog!!.isShowing) {
-                mProgressDialog?.cancel()
-            }
-        }
+        if (mProgressDialog?.isShowing ?: false)
+            mProgressDialog?.cancel()
     }
 
-    override fun onError(message: String) = showSnackBar(message)
+    override fun showToast(resId: Int) = toast(resId)
 
-    fun showSnackBar(message: String) = Snackbar.make(findViewById(android.R.id.content), message, Snackbar.LENGTH_SHORT).show()
+    override fun showToast(message: String) = toast(message)
 
-    override fun onError(@StringRes resId: Int) = onError(getString(resId))
+    override fun showSnackBar(message: String) = findViewById(android.R.id.content).snackBar(message).show()
+
+    override fun showSnackBar(resId: Int) = findViewById(android.R.id.content).snackBar(resId).show()
 
     override fun isNetworkConnected() = applicationContext.isNetworkConnected()
 
@@ -71,8 +70,6 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
             imm.hideSoftInputFromWindow(view.windowToken, 0)
         }
     }
-
-    override fun onDestroy() = super.onDestroy()
 
     protected abstract fun setUp()
 }

@@ -1,5 +1,6 @@
 package com.twismart.wallpapershd.data.local.database
 
+import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
@@ -43,3 +44,15 @@ class MyDataBase(context: Context, name: String, factory: SQLiteDatabase.CursorF
 }
 
 fun Cursor.toWallpaper() = Wallpaper(getString(0), getString(1), getString(2), getString(3), getString(4), getString(5), getString(6))
+
+fun Wallpaper.toContentValues(): ContentValues{
+    val values = ContentValues()
+    values.put(MyDataBase.COLUMN_NAME_ID, id)
+    values.put(MyDataBase.COLUMN_NAME_IMAGE_URL, urlImage)
+    values.put(MyDataBase.COLUMN_NAME_IMAGE_PATH, pathImage)
+    values.put(MyDataBase.COLUMN_NAME_WIDTH, width)
+    values.put(MyDataBase.COLUMN_NAME_HEIGHT, height)
+    values.put(MyDataBase.COLUMN_NAME_LICENSE, license)
+    values.put(MyDataBase.COLUMN_NAME_RATING, rating)
+    return values
+}

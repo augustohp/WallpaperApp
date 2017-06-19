@@ -72,6 +72,7 @@ ext {
     glideVersion = '3.7.0'
     junitVersion = '4.12'
     ankoVersion = '0.10.0'
+    mockitoVersion = '2.7.1'
 }
 
 
@@ -112,10 +113,16 @@ dependencies {
     kapt "com.google.dagger:dagger-compiler:$daggerVersion"
     compile "com.google.dagger:dagger:$daggerVersion"
 
-    // Anko Commons
+    // anko Commons
     compile "org.jetbrains.anko:anko-commons:$ankoVersion"
 
-    testImplementation "junit:junit:$junitVersion"
+    // dependencies for local unit tests
+    testCompile "junit:junit:$junitVersion"
+    testCompile "org.mockito:mockito-core:$mockitoVersion"
+    testAnnotationProcessor "com.google.dagger:dagger-compiler:$daggerVersion"
+
+
+    // fabric crashlytics
     compile('com.crashlytics.sdk.android:crashlytics:2.6.8@aar') {
         transitive = true
     }

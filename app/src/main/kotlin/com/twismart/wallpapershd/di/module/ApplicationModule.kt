@@ -2,6 +2,8 @@ package com.twismart.wallpapershd.di.module
 
 import android.app.Application
 import android.content.Context
+import com.twismart.wallpapershd.data.DataManager
+import com.twismart.wallpapershd.data.IDataManager
 import com.twismart.wallpapershd.data.local.database.IMyDatabaseHelper
 import com.twismart.wallpapershd.data.local.database.MyDataBase
 import com.twismart.wallpapershd.data.local.database.MyDatabaseHelper
@@ -31,6 +33,8 @@ import retrofit2.converter.gson.GsonConverterFactory
                 .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
     }
+
+    @Provides @Singleton fun provideIDataManager(dataManager: DataManager): IDataManager = dataManager
 
     @Provides @Singleton fun provideWallpaperService(): WallpaperService = provideRetrofit().create(WallpaperService::class.java)
 

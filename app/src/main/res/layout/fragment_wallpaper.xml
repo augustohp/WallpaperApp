@@ -6,18 +6,32 @@
     android:layout_height="match_parent"
     tools:context="com.twismart.wallpapershd.ui.wallpaper.activity.WallpapersActivity">
 
-    <ImageView
-        android:id="@+id/imageWallpaper"
+    <FrameLayout
+        android:id="@+id/frameWrapper"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_gravity="center">
 
+        <ImageView
+            android:id="@+id/imageWallpaper"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
 
-    <ImageView
-        android:id="@+id/imageSwitchFavorite"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_gravity="bottom|end"
-        android:src="@drawable/ic_favorite"
-        android:tint="#ffffff"/>
+        <ImageView
+            android:id="@+id/imageSwitchFavorite"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_gravity="bottom|end"
+            android:src="@drawable/ic_favorite"
+            android:tint="#ffffff" />
+
+        <View
+            android:id="@+id/indicator"
+            android:layout_width="50dp"
+            android:layout_height="5dp"
+            android:background="@color/colorPrimary"
+            android:visibility="gone"
+            android:layout_gravity="top|start"/>
+    </FrameLayout>
 
 </android.support.design.widget.CoordinatorLayout>

@@ -1,6 +1,6 @@
 package com.twismart.wallpapershd.ui.base
 
-import com.twismart.wallpapershd.data.DataManager
+import com.twismart.wallpapershd.data.IDataManager
 
 import javax.inject.Inject
 
@@ -11,7 +11,7 @@ import io.reactivex.disposables.CompositeDisposable
  **/
 
 open class BasePresenter<V : BaseContract.View>
-@Inject constructor(val dataManager: DataManager, val compositeDisposable: CompositeDisposable) : BaseContract.Presenter<V> {
+@Inject constructor(val dataManager: IDataManager, val compositeDisposable: CompositeDisposable) : BaseContract.Presenter<V> {
 
     var baseView: V? = null
 
@@ -19,7 +19,7 @@ open class BasePresenter<V : BaseContract.View>
         baseView = view
     }
 
-    override fun dettachView() {
+    override fun detachView() {
         if (!compositeDisposable.isDisposed) {
             compositeDisposable.dispose()
         }

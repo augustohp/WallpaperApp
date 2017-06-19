@@ -4,7 +4,7 @@ import android.app.Application
 import android.content.Context
 
 import com.twismart.wallpapershd.WallpaperApplication
-import com.twismart.wallpapershd.data.DataManager
+import com.twismart.wallpapershd.data.IDataManager
 import com.twismart.wallpapershd.data.local.database.MyDataBase
 import com.twismart.wallpapershd.data.remote.WallpaperService
 import com.twismart.wallpapershd.di.annotation.ApplicationContext
@@ -27,7 +27,7 @@ interface ApplicationComponent {
 
     fun wallpaperService(): WallpaperService
 
-    fun dataManager(): DataManager
+    fun dataManager(): IDataManager
 
     fun MyDataBase(): MyDataBase
 }

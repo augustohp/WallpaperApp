@@ -12,6 +12,7 @@ import android.net.ConnectivityManager
 import android.os.Environment
 import android.provider.Settings
 import android.support.annotation.StringRes
+import android.support.design.widget.Snackbar
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
@@ -40,12 +41,13 @@ fun Any.error(msg: Any? = "Error", tag: String = this.javaClass.simpleName){
     Log.e(tag, msg.toString())
 }
 
-fun Context.toast(text: String, duration: Int = Toast.LENGTH_SHORT){
-    Toast.makeText(this, text, duration).show()
-}
-fun Context.toast(@StringRes resId: Int, duration: Int = Toast.LENGTH_SHORT){
-    Toast.makeText(this, resId, duration).show()
-}
+fun Context.toast(text: String, duration: Int = Toast.LENGTH_SHORT) = Toast.makeText(this, text, duration).show()
+
+fun Context.toast(@StringRes resId: Int, duration: Int = Toast.LENGTH_SHORT) = Toast.makeText(this, resId, duration).show()
+
+fun View.snackBar(message: String, duration: Int = Snackbar.LENGTH_SHORT) = Snackbar.make(this, message, duration)
+
+fun View.snackBar(@StringRes resId: Int, duration: Int = Snackbar.LENGTH_SHORT) = Snackbar.make(this, resId, duration)
 
 fun View.setWidth(width: Int) {
     val params = layoutParams
@@ -55,6 +57,13 @@ fun View.setWidth(width: Int) {
 
 fun View.setHeight(height: Int) {
     val params = layoutParams
+    params.height = height
+    layoutParams = params
+}
+
+fun View.setDimensions(width: Int, height: Int) {
+    val params = layoutParams
+    params.width = width
     params.height = height
     layoutParams = params
 }
@@ -119,16 +128,14 @@ fun Context.getStatusBarHeight(): Int {
     return result
 }
 
-fun showLoadingDialog(context: Context): ProgressDialog {
-    val progressDialog = ProgressDialog(context)
-    progressDialog.show()
-    if (progressDialog.window != null) {
-        progressDialog.window!!.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+fun Context.showLoadingDialog(cancelable: Boolean = true, canceledOnTouchOutside: Boolean = false): ProgressDialog {
+    return ProgressDialog(this).apply {
+        show()
+        window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        isIndeterminate = true
+        setCancelable(cancelable)
+        setCanceledOnTouchOutside(canceledOnTouchOutside)
     }
-    progressDialog.isIndeterminate = true
-    progressDialog.setCancelable(true)
-    progressDialog.setCanceledOnTouchOutside(false)
-    return progressDialog
 }
 
 @SuppressLint("all")
@@ -179,3 +186,11 @@ fun <T>List<T>.showValues(){
     forEach { debug(it) }
     debug("All the values have been showed")
 }
+
+fun isJellyBeanOrLater(): Boolean = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.JELLY_BEAN
+
+fun isLollipopOrLater(): Boolean = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP
+
+fun isNougatOrLater(): Boolean = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N
+
+fun Int.toAbsoluteValue() = Math.abs(this)

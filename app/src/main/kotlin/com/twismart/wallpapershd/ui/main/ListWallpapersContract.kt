@@ -11,10 +11,11 @@ class ListWallpapersContract {
 
     interface Presenter<V : ListWallpapersContract.View> : BaseContract.Presenter<V> {
         fun getWallpapersList()
-        fun getAllFavoriteWallpapers()
+        fun getMostPopularWallpapers()
+        fun getFavoriteWallpapers()
     }
 
     interface View : BaseContract.View {
-        fun setWallpaperList(wallpaperList: List<Wallpaper>)
+        fun setWallpaperList(wallpaperList: ArrayList<Wallpaper>)
     }
 }
