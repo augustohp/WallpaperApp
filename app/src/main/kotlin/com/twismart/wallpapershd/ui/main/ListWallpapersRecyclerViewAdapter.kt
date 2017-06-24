@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2017 Sneyder Angulo.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.twismart.wallpapershd.ui.main
 
 import android.annotation.TargetApi
@@ -14,16 +30,11 @@ import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.data.model.Wallpaper
 import com.twismart.wallpapershd.ui.wallpaper.activity.WallpapersActivity
 import com.twismart.wallpapershd.utils.debug
-import com.twismart.wallpapershd.utils.getScreenHeight
-import com.twismart.wallpapershd.utils.getScreenWidth
 import com.twismart.wallpapershd.utils.isJellyBeanOrLater
+import com.twismart.wallpapershd.utils.screenWidth
 import java.util.ArrayList
 
-/**
- * Created by sneyd on 4/13/2017.
- **/
-
-class ListWallpapersRecyclerViewAdapter(private val context: Context) : RecyclerView.Adapter<ListWallpapersRecyclerViewAdapter.MyItemNewViewHolder>() {
+class ListWallpapersRecyclerViewAdapter(private val context: Context) : RecyclerView.Adapter<ListWallpapersRecyclerViewAdapter.WallpaperViewHolder>() {
 
     private var wallpaperList: ArrayList<Wallpaper> = ArrayList()
 
@@ -32,11 +43,11 @@ class ListWallpapersRecyclerViewAdapter(private val context: Context) : Recycler
         notifyDataSetChanged()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyItemNewViewHolder {
-        return MyItemNewViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_wallpaper, parent, false))
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): WallpaperViewHolder {
+        return WallpaperViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.item_wallpaper, parent, false))
     }
 
-    override fun onBindViewHolder(holder: MyItemNewViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: WallpaperViewHolder, position: Int) {
         holder.bindData(wallpaperList[position], position)
     }
 
@@ -44,7 +55,7 @@ class ListWallpapersRecyclerViewAdapter(private val context: Context) : Recycler
         return wallpaperList.size
     }
 
-    inner class MyItemNewViewHolder(private val mView: View) : RecyclerView.ViewHolder(mView) {
+    inner class WallpaperViewHolder(private val mView: View) : RecyclerView.ViewHolder(mView) {
 
         val imageWallpaper: ImageView by lazy { mView.findViewById(R.id.imageWallpaper) as ImageView }
 
@@ -54,25 +65,26 @@ class ListWallpapersRecyclerViewAdapter(private val context: Context) : Recycler
 
             Picasso.with(context)
                     .load(itemWallpaper.urlImage)
-                    .resize(context.getScreenWidth().div(3), context.getScreenWidth().div(3))
+                    .resize(context.screenWidth().div(3), context.screenWidth().div(3))
                     .centerCrop()
                     .into(imageWallpaper)
 
             mView.setOnClickListener {
-                if(isJellyBeanOrLater()){
+                //start activity that shows the selected wallpaper in detail through a list of fragments in a ViewPager
+                if (isJellyBeanOrLater()) {// if the below code is supported
                     try {
+                        // try to start the activity with a cute animation
                         context.startActivity(WallpapersActivity.newIntent(context, wallpaperList, position),
                                 ActivityOptions.makeThumbnailScaleUpAnimation(mView, (imageWallpaper.drawable as BitmapDrawable).bitmap, 0, 0).toBundle())
-                    }
-                    catch (e: Exception){
+                    } catch (e: Exception) {
+                        // if something get wrong start the activity in a normal way
                         context.startActivity(WallpapersActivity.newIntent(context, wallpaperList, position))
                     }
-                }
-                else{
+                } else {
+                    // other way just start the Activity in a normal way
                     context.startActivity(WallpapersActivity.newIntent(context, wallpaperList, position))
                 }
             }
-            mView.setOnLongClickListener { false }
         }
     }
 }

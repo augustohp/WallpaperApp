@@ -1,10 +1,28 @@
+/*
+ * Copyright (C) 2017 Sneyder Angulo.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.twismart.wallpapershd.ui.wallpaper.fragment
 
+import android.annotation.TargetApi
 import android.content.Context
 import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewAnimationUtils
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -16,8 +34,7 @@ import com.twismart.wallpapershd.ui.base.BaseFragment
 import com.twismart.wallpapershd.utils.*
 import kotlinx.android.synthetic.main.fragment_wallpaper.*
 
-
-class WallpaperFragment : BaseFragment(){
+class WallpaperFragment : BaseFragment() {
 
     companion object {
         private val ARG_WALLPAPER = "wallpaper"
@@ -73,16 +90,15 @@ class WallpaperFragment : BaseFragment(){
 
         imageSwitchFavorite.setOnClickListener {
             debug("clickFavorite id ${mWallpaper.id}")
-            if (mWallpaper.isFavorite){
+            if (mWallpaper.isFavorite) {
                 mListener?.onClickUnFavorite(mWallpaper.id, positionFragment)
-            }
-            else{
+            } else {
                 mListener?.onClickFavorite(mWallpaper, positionFragment)
             }
         }
     }
 
-    fun calculateDimensions(): Pair<Int, Int>{
+    fun calculateDimensions(): Pair<Int, Int> {
         var widthEnd: Float
         var heightEnd: Float
 
@@ -100,11 +116,10 @@ class WallpaperFragment : BaseFragment(){
             widthEnd = (widthWallpaper / heightWallpaper) * heightEnd
         }
 
-        if(widthEnd > imageViewWidth){
+        if (widthEnd > imageViewWidth) {
             widthEnd = imageViewWidth
             heightEnd = (heightWallpaper / widthWallpaper) * widthEnd
-        }
-        else if(heightEnd > imageViewHeight){
+        } else if (heightEnd > imageViewHeight) {
             heightEnd = imageViewHeight
             widthEnd = (widthWallpaper / heightWallpaper) * heightEnd
         }
@@ -113,27 +128,36 @@ class WallpaperFragment : BaseFragment(){
 
     val animation: Animation by lazy { AnimationUtils.loadAnimation(context, R.anim.move_right) }
 
-    fun loadingWallpaper(){
+    fun loadingWallpaper() {
         indicator.visible()
         indicator.startAnimation(animation)
     }
 
-    fun readyWallpaper(){
+    fun readyWallpaper() {
         indicator.clearAnimation()
         indicator.gone()
     }
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        if(context is OnWallpaperFragmentListener){
+        if (context is OnWallpaperFragmentListener) {
             mListener = context
         }
     }
 
+    @TargetApi(21)
     fun wallpaperIsInFavorites() {
         debug("wallpaperIsInFavorites ${mWallpaper.id}")
-        imageSwitchFavorite.setColorFilter(Color.RED)
         mWallpaper.isFavorite = true
+        imageSwitchFavorite.setColorFilter(Color.RED)
+
+        if (isLollipopOrLater()) {
+            val cx = imageSwitchFavorite.width / 2
+            val cy = imageSwitchFavorite.height / 2
+            val finalRadius = Math.max(imageSwitchFavorite.width, imageSwitchFavorite.height) / 2
+            val anim = ViewAnimationUtils.createCircularReveal(imageSwitchFavorite, cx, cy, 0f, finalRadius.toFloat())
+            anim.start()
+        }
     }
 
     fun wallpaperIsNotInFavorites() {
@@ -147,7 +171,7 @@ class WallpaperFragment : BaseFragment(){
         debug("fragment onDestroy")
     }
 
-    interface OnWallpaperFragmentListener{
+    interface OnWallpaperFragmentListener {
         fun onClickFavorite(wallpaperToFavorites: Wallpaper, positionFragment: Int)
         fun onClickUnFavorite(id: String, positionFragment: Int)
     }

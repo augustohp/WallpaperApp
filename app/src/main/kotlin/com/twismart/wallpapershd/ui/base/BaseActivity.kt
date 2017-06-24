@@ -1,25 +1,38 @@
+/*
+ * Copyright (C) 2017 Sneyder Angulo.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+@file:Suppress("unused")
+
 package com.twismart.wallpapershd.ui.base
 
 import android.annotation.TargetApi
 import android.app.ProgressDialog
-import android.content.Context
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import android.view.inputmethod.InputMethodManager
 import com.twismart.wallpapershd.WallpaperApplication
 import com.twismart.wallpapershd.di.component.ActivityComponent
 import com.twismart.wallpapershd.di.component.DaggerActivityComponent
 import com.twismart.wallpapershd.di.module.ActivityModule
-import com.twismart.wallpapershd.utils.isNetworkConnected
-import com.twismart.wallpapershd.utils.showLoadingDialog
-import com.twismart.wallpapershd.utils.snackBar
-import com.twismart.wallpapershd.utils.toast
+import com.twismart.wallpapershd.utils.*
 
 abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
 
-    var mProgressDialog: ProgressDialog? = null
+    val mProgressDialog: ProgressDialog by lazy { progressDialog() }
 
     lateinit var activityComponent: ActivityComponent
 
@@ -45,30 +58,27 @@ abstract class BaseActivity : AppCompatActivity(), BaseContract.View {
 
     override fun showLoading() {
         hideLoading()
-        mProgressDialog = showLoadingDialog()
+        mProgressDialog.show()
+
     }
 
     override fun hideLoading() {
-        if (mProgressDialog?.isShowing ?: false)
-            mProgressDialog?.cancel()
+        if (mProgressDialog.isShowing)
+            mProgressDialog.cancel()
     }
 
     override fun showToast(resId: Int) = toast(resId)
 
     override fun showToast(message: String) = toast(message)
 
-    override fun showSnackBar(message: String) = findViewById(android.R.id.content).snackBar(message).show()
+    override fun showSnackBar(message: String) = snackBar(message).show()
 
-    override fun showSnackBar(resId: Int) = findViewById(android.R.id.content).snackBar(resId).show()
+    override fun showSnackBar(resId: Int) = snackBar(resId).show()
 
     override fun isNetworkConnected() = applicationContext.isNetworkConnected()
 
     override fun hideKeyboard() {
-        val view = this.currentFocus
-        if (view != null) {
-            val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-            imm.hideSoftInputFromWindow(view.windowToken, 0)
-        }
+        hideSoftInput()
     }
 
     protected abstract fun setUp()

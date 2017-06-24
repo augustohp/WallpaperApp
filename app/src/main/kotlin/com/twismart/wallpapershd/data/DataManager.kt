@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2017 Sneyder Angulo.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.twismart.wallpapershd.data
 
 import android.annotation.TargetApi
@@ -6,7 +22,6 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Rect
-import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.data.local.database.IMyDatabaseHelper
 import com.twismart.wallpapershd.data.remote.WallpaperService
 import com.twismart.wallpapershd.data.model.Wallpaper
@@ -15,8 +30,6 @@ import com.twismart.wallpapershd.utils.isNougatOrLater
 import javax.inject.Inject
 import javax.inject.Singleton
 import io.reactivex.Observable
-import org.jetbrains.anko.doAsyncResult
-import org.jetbrains.anko.uiThread
 import retrofit2.http.Url
 import java.net.URL
 
@@ -37,8 +50,10 @@ import java.net.URL
         return Observable.create {
             subscriber ->
             try {
+                // load image(wallpaper) from url
                 val inputStream = URL(url).openStream()
                 val bitmapWallpaper = BitmapFactory.decodeStream(inputStream)
+                // set image as Wallpaper
                 subscriber.onNext(setWallpaper(bitmapWallpaper))
                 subscriber.onComplete()
             } catch (e: Exception) {
@@ -50,11 +65,11 @@ import java.net.URL
     }
 
     @TargetApi(24)
-    fun setWallpaper(bitmapWallpaper: Bitmap){
+    fun setWallpaper(bitmapWallpaper: Bitmap) {
         //if version API is at least nougat
-        if (isNougatOrLater()){
+        if (isNougatOrLater()) {
             //get the wallpaper's width and height
-            val wallpaperWidth : Int = bitmapWallpaper.width
+            val wallpaperWidth: Int = bitmapWallpaper.width
             val wallpaperHeight: Int = bitmapWallpaper.height
 
             //set the wallpaper in lock screen
@@ -71,7 +86,7 @@ import java.net.URL
                     true,
                     WallpaperManager.FLAG_SYSTEM)
         }//else set wallpaper in a normal and typical way
-        else{
+        else {
             mWallpaperManager.setBitmap(bitmapWallpaper)
         }
 

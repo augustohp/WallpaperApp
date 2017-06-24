@@ -1,3 +1,19 @@
+/*
+ * Copyright (C) 2017 Sneyder Angulo.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package com.twismart.wallpapershd.ui.wallpaper.activity
 
 import com.twismart.wallpapershd.R
@@ -13,13 +29,9 @@ import io.reactivex.observers.DisposableObserver
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
-
-/**
- * Created by sneyd on 5/16/2017.
- **/
-
 class WallpapersPresenter<V : WallpapersContract.View>
-@Inject constructor(dataManager: IDataManager, compositeDisposable: CompositeDisposable) : BasePresenter<V>(dataManager, compositeDisposable), WallpapersContract.Presenter<V> {
+@Inject constructor(dataManager: IDataManager, compositeDisposable: CompositeDisposable)
+    : BasePresenter<V>(dataManager, compositeDisposable), WallpapersContract.Presenter<V> {
 
     override fun setWallpaperFromUrl(url: String, positionFragment: Int) {
         //load wallpaper(bitmap) from url and set it
@@ -28,14 +40,17 @@ class WallpapersPresenter<V : WallpapersContract.View>
                 .setWallpaperFromUrl(url)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribeWith(object : DisposableObserver<Unit>(){
-                    override fun onNext(h: Unit) {
+                .subscribeWith(object : DisposableObserver<Unit>() {
+                    override fun onComplete() {}
+                    override fun onNext(unit: Unit) {
                         //notify the view the wallpaper is ready
                         baseView?.readyWallpaper(positionFragment)
                         baseView?.showSnackBar(R.string.set_wallpaper_sucessfully)
                     }
-                    override fun onComplete() {}
-                    override fun onError(e: Throwable?) { baseView?.showSnackBar(R.string.set_wallpaper_error) }
+
+                    override fun onError(e: Throwable) {
+                        baseView?.showSnackBar(R.string.set_wallpaper_error)
+                    }
                 }))
     }
 
@@ -46,16 +61,17 @@ class WallpapersPresenter<V : WallpapersContract.View>
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableObserver<Wallpaper?>() {
-                    override fun onComplete() { }
-                    override fun onError(t: Throwable?) {
-                        t?.let { debug("onError ${t.message}") }
-                        //if wallpaper is not in favorites notify it
-                        baseView?.wallpaperIsNotInFavorites(positionFragment)
-                    }
+                    override fun onComplete() {}
                     override fun onNext(wallpaper: Wallpaper?) {
-                        debug("onNext checkIfWallpaperIsFavorite ")
+                        debug("onNext", "checkIfWallpaperIsFavorite")
                         //if wallpaper is in favorites notify it
                         baseView?.wallpaperIsInFavorites(positionFragment)
+                    }
+
+                    override fun onError(t: Throwable) {
+                        debug("onError ${t.message}", "checkIfWallpaperIsFavorite")
+                        //if wallpaper is not in favorites notify it
+                        baseView?.wallpaperIsNotInFavorites(positionFragment)
                     }
                 })
         )
@@ -88,9 +104,9 @@ class WallpapersPresenter<V : WallpapersContract.View>
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeWith(object : DisposableObserver<Unit>() {
-                    override fun onNext(wallpapers: Unit) = next()
-                    override fun onError(e: Throwable) = e.let { error("onError ${e.message}") }
                     override fun onComplete() {}
+                    override fun onNext(wallpapers: Unit) = next()
+                    override fun onError(e: Throwable) = error("onError ${e.message}")
                 })
         )
     }
