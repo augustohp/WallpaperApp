@@ -28,13 +28,13 @@ import android.widget.ImageView
 import com.squareup.picasso.Picasso
 import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.data.model.Wallpaper
-import com.twismart.wallpapershd.ui.wallpaper.activity.WallpapersActivity
+import com.twismart.wallpapershd.ui.wallpaper.WallpaperDetailActivity
 import com.twismart.wallpapershd.utils.debug
 import com.twismart.wallpapershd.utils.isJellyBeanOrLater
 import com.twismart.wallpapershd.utils.screenWidth
 import java.util.ArrayList
 
-class ListWallpapersRecyclerViewAdapter(private val context: Context) : RecyclerView.Adapter<ListWallpapersRecyclerViewAdapter.WallpaperViewHolder>() {
+class WallpaperListAdapter(private val context: Context) : RecyclerView.Adapter<WallpaperListAdapter.WallpaperViewHolder>() {
 
     private var wallpaperList: ArrayList<Wallpaper> = ArrayList()
 
@@ -51,9 +51,12 @@ class ListWallpapersRecyclerViewAdapter(private val context: Context) : Recycler
         holder.bindData(wallpaperList[position], position)
     }
 
-    override fun getItemCount(): Int {
-        return wallpaperList.size
+    override fun onDetachedFromRecyclerView(recyclerView: RecyclerView?) {
+        debug("onDetachedFromRecyclerView")
+        super.onDetachedFromRecyclerView(recyclerView)
     }
+
+    override fun getItemCount(): Int = wallpaperList.size
 
     inner class WallpaperViewHolder(private val mView: View) : RecyclerView.ViewHolder(mView) {
 
@@ -74,15 +77,15 @@ class ListWallpapersRecyclerViewAdapter(private val context: Context) : Recycler
                 if (isJellyBeanOrLater()) {// if the below code is supported
                     try {
                         // try to start the activity with a cute animation
-                        context.startActivity(WallpapersActivity.newIntent(context, wallpaperList, position),
+                        context.startActivity(WallpaperDetailActivity.newIntent(context, wallpaperList, position),
                                 ActivityOptions.makeThumbnailScaleUpAnimation(mView, (imageWallpaper.drawable as BitmapDrawable).bitmap, 0, 0).toBundle())
                     } catch (e: Exception) {
                         // if something get wrong start the activity in a normal way
-                        context.startActivity(WallpapersActivity.newIntent(context, wallpaperList, position))
+                        context.startActivity(WallpaperDetailActivity.newIntent(context, wallpaperList, position))
                     }
                 } else {
                     // other way just start the Activity in a normal way
-                    context.startActivity(WallpapersActivity.newIntent(context, wallpaperList, position))
+                    context.startActivity(WallpaperDetailActivity.newIntent(context, wallpaperList, position))
                 }
             }
         }

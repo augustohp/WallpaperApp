@@ -16,6 +16,7 @@
 
 package com.twismart.wallpapershd.ui.main
 
+import android.content.Context
 import android.os.Bundle
 import android.support.v7.widget.GridLayoutManager
 import android.view.LayoutInflater
@@ -24,85 +25,90 @@ import android.view.ViewGroup
 import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.data.model.Wallpaper
 import com.twismart.wallpapershd.ui.base.BaseFragment
-import com.twismart.wallpapershd.utils.Constants
-import com.twismart.wallpapershd.utils.debug
-import com.twismart.wallpapershd.utils.inflate
+import com.twismart.wallpapershd.utils.*
 import kotlinx.android.synthetic.main.fragment_list_wallpapers.*
 import javax.inject.Inject
 
-class ListWallpapersFragment : BaseFragment(), ListWallpapersContract.View {
+class WallpaperListFragment : BaseFragment(), WallpaperListContract.View {
 
     companion object {
         private val ARG_TYPE_LIST = "TypeListWallpapers"
-        fun newInstance(typeListWallpapers: String): ListWallpapersFragment {
-            val fragment = ListWallpapersFragment()
-            val args = Bundle()
-            args.putString(ARG_TYPE_LIST, typeListWallpapers)
-            fragment.arguments = args
+        fun newInstance(typeListWallpapers: String): WallpaperListFragment {
+            val fragment = WallpaperListFragment()
+            fragment.withArguments(ARG_TYPE_LIST to typeListWallpapers)
             return fragment
         }
     }
 
-    @Inject lateinit var mPresenter: ListWallpapersPresenter<ListWallpapersContract.View>
+    @Inject lateinit var mListPresenter: WallpaperListPresenter<WallpaperListContract.View>
 
-    private var mWallpapersRecyclerViewAdapter: ListWallpapersRecyclerViewAdapter? = null
+    private var mWallpaperListAdapter: WallpaperListAdapter? = null
     private var mTypeListWallpapers: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        debug("F onCreate")
+
         super.onCreate(savedInstanceState)
         if (arguments != null) {
             mTypeListWallpapers = arguments.getString(ARG_TYPE_LIST)
         }
     }
 
+    override fun onAttach(context: Context?) {
+        debug("F onAttach")
+        super.onAttach(context)
+    }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        debug("onCreateView F")
+        val v = activity.inflate(R.layout.fragment_list_wallpapers, container)
         activityComponent?.inject(this)
-
-        return context?.inflate(R.layout.fragment_list_wallpapers, container)
+        return v
     }
 
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-
-        mPresenter.attachView(this)
+        debug("onActivityCreated F")
+        mListPresenter.attachView(this)
 
         recyclerViewWallpapers?.apply {
             setHasFixedSize(true)// improve performance
             layoutManager = GridLayoutManager(context, 3)// set grid layout manager with 3 columns
-            mWallpapersRecyclerViewAdapter = ListWallpapersRecyclerViewAdapter(context)// create recyclerViewAdapter
-            adapter = mWallpapersRecyclerViewAdapter// set recyclerViewAdapter to recyclerView
+            mWallpaperListAdapter = WallpaperListAdapter(context)// create recyclerViewAdapter
+            adapter = mWallpaperListAdapter// set recyclerViewAdapter to recyclerView
         }
         refreshContent()
 
         swipeRefresh?.setOnRefreshListener {
             refreshContent()
         }
+        super.onActivityCreated(savedInstanceState)
     }
 
     fun refreshContent() {
-        debug("refreshContent")
         when (mTypeListWallpapers) {
             Constants.TypeListWallpapers.ALL.value -> {
-                mPresenter.getWallpapersList()
+                mListPresenter.loadWallpapersList()
             }
             Constants.TypeListWallpapers.MOST_POPULAR.value -> {
-                mPresenter.getMostPopularWallpapers()
+                mListPresenter.loadMostPopularWallpapers()
             }
             Constants.TypeListWallpapers.MY_FAVORITES.value -> {
-                mPresenter.getFavoriteWallpapers()
+                mListPresenter.loadFavoriteWallpapers()
             }
         }
     }
 
     override fun setWallpaperList(wallpaperList: ArrayList<Wallpaper>) {
-        mWallpapersRecyclerViewAdapter?.setWallpaperList(wallpaperList)
+        mWallpaperListAdapter?.setWallpaperList(wallpaperList)
         swipeRefresh?.isRefreshing = false
     }
 
-    override fun onDetach() {
-        mPresenter.detachView()
-        super.onDetach()
+    override fun onDestroyView() {
+        mListPresenter.detachView()
+        recyclerViewWallpapers?.gone()
+        swipeRefresh?.gone()
+        System.gc()
+        super.onDestroyView()
     }
 }

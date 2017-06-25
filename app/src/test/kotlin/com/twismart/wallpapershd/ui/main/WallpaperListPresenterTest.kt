@@ -29,10 +29,10 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.Rule
 
-class ListWallpapersPresenterTest {
+class WallpaperListPresenterTest {
 
-    lateinit var mMockListWallpapersView: ListWallpapersContract.View
-    lateinit var mListWallpapersPresenter: ListWallpapersPresenter<ListWallpapersContract.View>
+    lateinit var mMockWallpaperListView: WallpaperListContract.View
+    lateinit var mWallpaperListPresenter: WallpaperListPresenter<WallpaperListContract.View>
     lateinit var mMockDataManager: IDataManager
     @Rule @JvmField var testSchedulerRule = RxImmediateSchedulerRule()
 
@@ -40,14 +40,14 @@ class ListWallpapersPresenterTest {
     fun setUp() {
         mMockDataManager = mock<IDataManager>()
         val compositeDisposable = CompositeDisposable()
-        mListWallpapersPresenter = ListWallpapersPresenter(mMockDataManager, compositeDisposable)
-        mMockListWallpapersView = mock<ListWallpapersContract.View>()
-        mListWallpapersPresenter.attachView(mMockListWallpapersView)
+        mWallpaperListPresenter = WallpaperListPresenter(mMockDataManager, compositeDisposable)
+        mMockWallpaperListView = mock<WallpaperListContract.View>()
+        mWallpaperListPresenter.attachView(mMockWallpaperListView)
     }
 
     @After
     fun tearDown() {
-        mListWallpapersPresenter.detachView()
+        mWallpaperListPresenter.detachView()
     }
 
     @Test
@@ -57,10 +57,10 @@ class ListWallpapersPresenterTest {
         whenever(mMockDataManager.loadWallpapersList(WallpaperService.GET_WALLPAPERS)).thenReturn(Observable.just(wallpapers))
 
         // call
-        mListWallpapersPresenter.getWallpapersList()
+        mWallpaperListPresenter.loadWallpapersList()
 
         // assert
-        verify(mMockListWallpapersView).setWallpaperList(wallpapers)
+        verify(mMockWallpaperListView).setWallpaperList(wallpapers)
     }
 
     @Test
@@ -70,10 +70,10 @@ class ListWallpapersPresenterTest {
         whenever(mMockDataManager.loadWallpapersList(WallpaperService.GET_MOST_POPULAR_WALLPAPERS)).thenReturn(Observable.just(wallpapers))
 
         // call
-        mListWallpapersPresenter.getMostPopularWallpapers()
+        mWallpaperListPresenter.loadMostPopularWallpapers()
 
         // assert
-        verify(mMockListWallpapersView).setWallpaperList(wallpapers)
+        verify(mMockWallpaperListView).setWallpaperList(wallpapers)
     }
 
     @Test
@@ -83,10 +83,10 @@ class ListWallpapersPresenterTest {
         whenever(mMockDataManager.loadFavoriteWallpapers()).thenReturn(Observable.just(wallpapers))
 
         // call
-        mListWallpapersPresenter.getFavoriteWallpapers()
+        mWallpaperListPresenter.loadFavoriteWallpapers()
 
         // assert
-        verify(mMockListWallpapersView).setWallpaperList(wallpapers)
+        verify(mMockWallpaperListView).setWallpaperList(wallpapers)
     }
 
 }

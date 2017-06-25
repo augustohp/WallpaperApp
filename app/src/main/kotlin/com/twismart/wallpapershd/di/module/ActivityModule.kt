@@ -19,10 +19,10 @@ package com.twismart.wallpapershd.di.module
 import android.app.Activity
 import com.twismart.wallpapershd.di.annotation.PerActivity
 
-import com.twismart.wallpapershd.ui.main.ListWallpapersContract
-import com.twismart.wallpapershd.ui.main.ListWallpapersPresenter
-import com.twismart.wallpapershd.ui.wallpaper.activity.WallpapersContract
-import com.twismart.wallpapershd.ui.wallpaper.activity.WallpapersPresenter
+import com.twismart.wallpapershd.ui.main.WallpaperListContract
+import com.twismart.wallpapershd.ui.main.WallpaperListPresenter
+import com.twismart.wallpapershd.ui.wallpaper.WallpaperDetailContract
+import com.twismart.wallpapershd.ui.wallpaper.WallpaperDetailPresenter
 
 import dagger.Module
 import dagger.Provides
@@ -34,11 +34,11 @@ import io.reactivex.disposables.CompositeDisposable
         return mActivity
     }
 
-    @Provides @PerActivity fun listWallpapersPresenter(presenter: ListWallpapersPresenter<ListWallpapersContract.View>): ListWallpapersContract.Presenter<ListWallpapersContract.View> {
-        return presenter
+    @Provides @PerActivity fun listWallpapersPresenter(listPresenter: WallpaperListPresenter<WallpaperListContract.View>): WallpaperListContract.Presenter<WallpaperListContract.View> {
+        return listPresenter
     }
 
-    @Provides @PerActivity fun wallpapersPresenter(presenter: WallpapersPresenter<WallpapersContract.View>): WallpapersContract.Presenter<WallpapersContract.View> {
+    @Provides @PerActivity fun wallpapersPresenter(presenter: WallpaperDetailPresenter<WallpaperDetailContract.View>): WallpaperDetailContract.Presenter<WallpaperDetailContract.View> {
         return presenter
     }
 

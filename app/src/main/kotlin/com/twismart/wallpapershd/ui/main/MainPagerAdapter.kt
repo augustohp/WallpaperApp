@@ -16,10 +16,11 @@
 
 package com.twismart.wallpapershd.ui.main
 
+
+import android.app.Fragment
+import android.app.FragmentManager
 import android.content.Context
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentManager
-import android.support.v4.app.FragmentPagerAdapter
+import android.support.v13.app.FragmentPagerAdapter
 import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.utils.Constants
 
@@ -31,9 +32,9 @@ class MainPagerAdapter(fragmentManager: FragmentManager, private val context: Co
 
     override fun getItem(position: Int): Fragment {
         return when (position) {
-            0 -> ListWallpapersFragment.newInstance(Constants.TypeListWallpapers.ALL.value)
-            1 -> ListWallpapersFragment.newInstance(Constants.TypeListWallpapers.MOST_POPULAR.value)
-            else -> ListWallpapersFragment.newInstance(Constants.TypeListWallpapers.MY_FAVORITES.value)
+            0 -> WallpaperListFragment.newInstance(Constants.TypeListWallpapers.ALL.value)
+            1 -> WallpaperListFragment.newInstance(Constants.TypeListWallpapers.MOST_POPULAR.value)
+            else -> WallpaperListFragment.newInstance(Constants.TypeListWallpapers.MY_FAVORITES.value)
         }
     }
 

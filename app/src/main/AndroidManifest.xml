@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     package="com.twismart.wallpapershd">
 
     <uses-feature
@@ -47,7 +46,7 @@
         </activity>
 
         <activity
-            android:name=".ui.wallpaper.activity.WallpapersActivity"
+            android:name=".ui.wallpaper.WallpaperDetailActivity"
             android:theme="@style/AppTheme.NoActionBar"/>
 
         <meta-data

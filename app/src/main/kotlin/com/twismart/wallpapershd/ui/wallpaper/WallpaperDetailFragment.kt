@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.twismart.wallpapershd.ui.wallpaper.fragment
+package com.twismart.wallpapershd.ui.wallpaper
 
 import android.annotation.TargetApi
 import android.content.Context
@@ -34,14 +34,14 @@ import com.twismart.wallpapershd.ui.base.BaseFragment
 import com.twismart.wallpapershd.utils.*
 import kotlinx.android.synthetic.main.fragment_wallpaper.*
 
-class WallpaperFragment : BaseFragment() {
+class WallpaperDetailFragment : BaseFragment() {
 
     companion object {
         private val ARG_WALLPAPER = "wallpaper"
         private val ARG_POSITION_FRAGMENT = "positionFragment"
-        fun newInstance(wallpaper: Wallpaper, positionFragment: Int): WallpaperFragment {
-            debug("WallpaperFragment newInstance id ${wallpaper.id}")
-            val fragment = WallpaperFragment()
+        fun newInstance(wallpaper: Wallpaper, positionFragment: Int): WallpaperDetailFragment {
+            debug("WallpaperDetailFragment newInstance id ${wallpaper.id}")
+            val fragment = WallpaperDetailFragment()
             val args = Bundle()
             args.putParcelable(ARG_WALLPAPER, wallpaper)
             args.putInt(ARG_POSITION_FRAGMENT, positionFragment)
@@ -58,18 +58,18 @@ class WallpaperFragment : BaseFragment() {
         super.onCreate(savedInstanceState)
         mWallpaper = arguments.getParcelable(ARG_WALLPAPER)
         positionFragment = arguments.getInt(ARG_POSITION_FRAGMENT)
-        debug("WallpaperFragment onCreate id ${mWallpaper.id}")
+        debug("WallpaperDetailFragment onCreate id ${mWallpaper.id}")
     }
 
     override fun onCreateView(inflater: LayoutInflater?, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         activityComponent?.inject(this)
-        debug("WallpaperFragment onCreateView id ${mWallpaper.id}")
-        return context?.inflate(R.layout.fragment_wallpaper, container)
+        debug("WallpaperDetailFragment onCreateView id ${mWallpaper.id}")
+        return activity.inflate(R.layout.fragment_wallpaper, container)
     }
 
     override fun onActivityCreated(savedInstanceState: Bundle?) {
         super.onActivityCreated(savedInstanceState)
-        debug("WallpaperFragment onActivityCreated id ${mWallpaper.id}")
+        debug("WallpaperDetailFragment onActivityCreated id ${mWallpaper.id}")
         // It's necessary use post method because of other way this would cause error due to imageWallpaper.getWidth() or getHeight() == 0
         imageWallpaper.post {
             // Calculate the width and height in order to fit the image correctly
@@ -78,7 +78,7 @@ class WallpaperFragment : BaseFragment() {
             // Pick up whether the image comes from a url or a path
             debug("onActivityCreated: widthEnd $widthEnd heightEnd $heightEnd")
             val sourceImage = if (mWallpaper.urlImage.isEmpty()) mWallpaper.pathImage else mWallpaper.urlImage
-            Glide.with(context)
+            Glide.with(activity)
                     .load(sourceImage)
                     .asBitmap()
                     .override(widthEnd, heightEnd)
@@ -147,7 +147,6 @@ class WallpaperFragment : BaseFragment() {
 
     @TargetApi(21)
     fun wallpaperIsInFavorites() {
-        debug("wallpaperIsInFavorites ${mWallpaper.id}")
         mWallpaper.isFavorite = true
         imageSwitchFavorite.setColorFilter(Color.RED)
 
@@ -161,18 +160,38 @@ class WallpaperFragment : BaseFragment() {
     }
 
     fun wallpaperIsNotInFavorites() {
-        debug("wallpaperIsNotInFavorites ${mWallpaper.id}")
         imageSwitchFavorite.setColorFilter(Color.WHITE)
         mWallpaper.isFavorite = false
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        debug("fragment onDestroy")
-    }
 
     interface OnWallpaperFragmentListener {
         fun onClickFavorite(wallpaperToFavorites: Wallpaper, positionFragment: Int)
         fun onClickUnFavorite(id: String, positionFragment: Int)
+    }
+
+    override fun onResume() {
+        debug("F onResume")
+        super.onResume()
+    }
+
+    override fun onPause() {
+        debug("F onPause")
+        super.onPause()
+    }
+
+    override fun onStop() {
+        debug("F onStop")
+        super.onStop()
+    }
+
+    override fun onDestroyView() {
+        debug("F onDestroyView")
+        super.onDestroyView()
+    }
+
+    override fun onDestroy() {
+        debug("F onDestroy")
+        super.onDestroy()
     }
 }

@@ -21,17 +21,17 @@ import com.nhaarman.mockito_kotlin.verify
 import com.nhaarman.mockito_kotlin.whenever
 import com.twismart.wallpapershd.R
 import com.twismart.wallpapershd.data.IDataManager
-import com.twismart.wallpapershd.ui.wallpaper.activity.WallpapersContract
-import com.twismart.wallpapershd.ui.wallpaper.activity.WallpapersPresenter
+import com.twismart.wallpapershd.ui.wallpaper.WallpaperDetailContract
+import com.twismart.wallpapershd.ui.wallpaper.WallpaperDetailPresenter
 import com.twismart.wallpapershd.util.RxImmediateSchedulerRule
 import io.reactivex.Observable
 import io.reactivex.disposables.CompositeDisposable
 import org.junit.*
 
-class WallpapersPresenterTest {
+class WallpaperDetailPresenterTest {
 
-    lateinit var mMockWallpapersView: WallpapersContract.View
-    lateinit var mWallpapersPresenter: WallpapersPresenter<WallpapersContract.View>
+    lateinit var mMockWallpaperDetailView: WallpaperDetailContract.View
+    lateinit var mWallpaperDetailPresenter: WallpaperDetailPresenter<WallpaperDetailContract.View>
     lateinit var mMockDataManager: IDataManager
     @Rule @JvmField var testSchedulerRule = RxImmediateSchedulerRule()
 
@@ -39,14 +39,14 @@ class WallpapersPresenterTest {
     fun setUp() {
         mMockDataManager = mock<IDataManager>()
         val compositeDisposable = CompositeDisposable()
-        mWallpapersPresenter = WallpapersPresenter<WallpapersContract.View>(mMockDataManager, compositeDisposable)
-        mMockWallpapersView = mock<WallpapersContract.View>()
-        mWallpapersPresenter.attachView(mMockWallpapersView)
+        mWallpaperDetailPresenter = WallpaperDetailPresenter<WallpaperDetailContract.View>(mMockDataManager, compositeDisposable)
+        mMockWallpaperDetailView = mock<WallpaperDetailContract.View>()
+        mWallpaperDetailPresenter.attachView(mMockWallpaperDetailView)
     }
 
     @After
     fun tearDown() {
-        mWallpapersPresenter.detachView()
+        mWallpaperDetailPresenter.detachView()
     }
 
     @Test
@@ -57,10 +57,10 @@ class WallpapersPresenterTest {
         whenever(mMockDataManager.setWallpaperFromUrl(urlImg)).thenReturn(Observable.just(Unit))
 
         // call
-        mWallpapersPresenter.setWallpaperFromUrl(urlImg, positionFragment)
+        mWallpaperDetailPresenter.setWallpaperFromUrl(urlImg, positionFragment)
 
         // assert
-        verify(mMockWallpapersView).readyWallpaper(positionFragment)
-        verify(mMockWallpapersView).showSnackBar(R.string.set_wallpaper_sucessfully)
+        verify(mMockWallpaperDetailView).readyWallpaper(positionFragment)
+        verify(mMockWallpaperDetailView).showSnackBar(R.string.set_wallpaper_sucessfully)
     }
 }

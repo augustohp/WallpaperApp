@@ -21,6 +21,8 @@ class WallpaperApplication : MultiDexApplication() {
         super.onCreate()
         Fabric.with(this, Crashlytics())
         component.inject(this)
-        Stetho.initializeWithDefaults(this)
+        if (BuildConfig.DEBUG) {
+            Stetho.initializeWithDefaults(this)
+        }
     }
 }

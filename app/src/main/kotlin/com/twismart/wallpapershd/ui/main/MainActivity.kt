@@ -19,6 +19,7 @@ package com.twismart.wallpapershd.ui.main
 import android.support.design.widget.TabLayout
 import android.os.Bundle
 import com.twismart.wallpapershd.R
+import com.twismart.wallpapershd.ui.adapters.ZoomOutPageTransformer
 import com.twismart.wallpapershd.ui.base.BaseActivity
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -36,7 +37,8 @@ class MainActivity : BaseActivity() {
 
         tabLayout.tabMode = TabLayout.MODE_FIXED
 
-        viewPager.adapter = MainPagerAdapter(supportFragmentManager, this@MainActivity)
-        tabLayout.setupWithViewPager(viewPager)
+        mViewPager.adapter = MainPagerAdapter(fragmentManager, this@MainActivity)
+        mViewPager.setPageTransformer(true, ZoomOutPageTransformer())
+        tabLayout.setupWithViewPager(mViewPager)
     }
 }

@@ -18,21 +18,36 @@
 package com.twismart.wallpapershd.utils
 
 import android.annotation.SuppressLint
-import android.app.*
+import android.app.FragmentTransaction
+import android.app.Activity
+import android.app.AlertDialog
+import android.app.Fragment
+import android.app.NotificationManager
+import android.app.ProgressDialog
 import android.content.Context
+import android.content.Intent
+import android.content.SharedPreferences
 import android.content.res.Resources
 import android.net.ConnectivityManager
+import android.net.Uri
+import android.os.Bundle
 import android.os.Environment
+import android.os.Parcelable
+import android.preference.PreferenceManager
 import android.provider.Settings
 import android.support.annotation.IdRes
 import android.support.annotation.StringRes
 import android.support.design.widget.Snackbar
 import android.util.DisplayMetrics
 import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.Toast
+import java.io.Serializable
 import java.util.regex.Pattern
 
 
@@ -348,21 +363,30 @@ fun Context.inflate(
 fun Activity.hideSoftInput() {
     var view = currentFocus
     if (view == null) view = View(this)
+    hideSoftInput(view)
+}
+
+fun Context.hideSoftInput(view: View) {
     val inputMethodManager = getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
 }
 
-fun Context.showSoftInput(edit: EditText) {
-    edit.isFocusable = true
-    edit.isFocusableInTouchMode = true
-    edit.requestFocus()
-    val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    inputMethodManager.showSoftInput(edit, 0)
+fun Context.showSoftInput(editText: EditText? = null) {
+    if (editText != null){
+        editText.isFocusable = true
+        editText.isFocusableInTouchMode = true
+        editText.requestFocus()
+        val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.showSoftInput(editText, 0)
+    }
+    else {
+        toggleSoftInput()
+    }
 }
 
 fun Context.toggleSoftInput() {
-    val imm = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-    imm.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
+    val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+    inputMethodManager.toggleSoftInput(InputMethodManager.SHOW_FORCED, 0)
 }
 
 
@@ -421,3 +445,133 @@ val Context.notificationManager: NotificationManager
 @SuppressLint("all")
 fun getDeviceId(context: Context)
         : String = Settings.Secure.getString(context.contentResolver, Settings.Secure.ANDROID_ID)
+
+
+val Context.defaultSharedPreferences: SharedPreferences
+    get() = PreferenceManager.getDefaultSharedPreferences(this)
+
+val Fragment.defaultSharedPreferences: SharedPreferences
+    get() = PreferenceManager.getDefaultSharedPreferences(activity)
+
+fun <T: Fragment> T.withArguments(vararg params: Pair<String, Any>): T {
+    arguments = bundleOf(*params)
+    return this
+}
+
+fun bundleOf(vararg params: Pair<String, Any>): Bundle {
+    val b = Bundle()
+    for ((k, v) in params) {
+        when (v) {
+            is Boolean -> b.putBoolean(k, v)
+            is Byte -> b.putByte(k, v)
+            is Char -> b.putChar(k, v)
+            is Short -> b.putShort(k, v)
+            is Int -> b.putInt(k, v)
+            is Long -> b.putLong(k, v)
+            is Float -> b.putFloat(k, v)
+            is Double -> b.putDouble(k, v)
+            is String -> b.putString(k, v)
+            is CharSequence -> b.putCharSequence(k, v)
+            is Parcelable -> b.putParcelable(k, v)
+            is Serializable -> b.putSerializable(k, v)
+            is BooleanArray -> b.putBooleanArray(k, v)
+            is ByteArray -> b.putByteArray(k, v)
+            is CharArray -> b.putCharArray(k, v)
+            is DoubleArray -> b.putDoubleArray(k, v)
+            is FloatArray -> b.putFloatArray(k, v)
+            is IntArray -> b.putIntArray(k, v)
+            is LongArray -> b.putLongArray(k, v)
+            is Array<*> -> {
+                @Suppress("UNCHECKED_CAST")
+                when {
+                    v.isArrayOf<Parcelable>() -> b.putParcelableArray(k, v as Array<out Parcelable>)
+                    v.isArrayOf<CharSequence>() -> b.putCharSequenceArray(k, v as Array<out CharSequence>)
+                    v.isArrayOf<String>() -> b.putStringArray(k, v as Array<out String>)
+                    else -> Log.e("Error in bundle of", "the argument passed is not valid")
+                }
+            }
+            is ShortArray -> b.putShortArray(k, v)
+            is Bundle -> b.putBundle(k, v)
+            else -> Log.e("Error in bundle of", "the argument passed is not valid")
+        }
+    }
+
+    return b
+}
+
+fun Context.email(email: String, subject: String = "", text: String = ""): Boolean {
+    val intent = Intent(Intent.ACTION_SENDTO)
+    intent.data = Uri.parse("mailto:")
+    intent.putExtra(Intent.EXTRA_EMAIL, arrayOf(email))
+    if (subject.isNotEmpty())
+        intent.putExtra(Intent.EXTRA_SUBJECT, subject)
+    if (text.isNotEmpty())
+        intent.putExtra(Intent.EXTRA_TEXT, text)
+    if (intent.resolveActivity(packageManager) != null) {
+        startActivity(intent)
+        return true
+    }
+    return false
+
+}
+
+fun Fragment.makeCall(number: String): Boolean = activity.makeCall(number)
+
+@SuppressLint("MissingPermission")
+fun Context.makeCall(number: String): Boolean {
+    try {
+        val intent = Intent(Intent.ACTION_CALL, Uri.parse("tel:$number"))
+        startActivity(intent)
+        return true
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return false
+    }
+}
+
+fun Fragment.sendSMS(number: String, text: String = ""): Boolean = activity.sendSMS(number, text)
+
+fun Context.sendSMS(number: String, text: String = ""): Boolean {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW, Uri.parse("sms:$number"))
+        intent.putExtra("sms_body", text)
+        startActivity(intent)
+        return true
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return false
+    }
+}
+
+fun Fragment.browse(url: String, newTask: Boolean = false) = activity.browse(url, newTask)
+
+fun Context.browse(url: String, newTask: Boolean = false): Boolean {
+    try {
+        val intent = Intent(Intent.ACTION_VIEW)
+        intent.data = Uri.parse(url)
+        if (newTask) {
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        }
+        startActivity(intent)
+        return true
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return false
+    }
+}
+
+fun Intent.clearTask(): Intent = apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK) }
+
+fun Intent.clearTop(): Intent = apply { addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP) }
+
+fun Intent.excludeFromRecents(): Intent = apply { addFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS) }
+
+fun Intent.multipleTask(): Intent = apply { addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK) }
+
+fun Intent.newTask(): Intent = apply { addFlags(Intent.FLAG_ACTIVITY_NEW_TASK) }
+
+fun Intent.noAnimation(): Intent = apply { addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION) }
+
+fun Intent.noHistory(): Intent = apply { addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY) }
+
+fun Intent.singleTop(): Intent = apply { addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP) }

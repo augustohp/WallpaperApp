@@ -14,20 +14,16 @@
  * limitations under the License.
  */
 
-package com.twismart.wallpapershd.ui.main
+package com.twismart.wallpapershd.ui.wallpaper
 
+import android.app.FragmentManager
+import android.content.Context
+import android.support.v13.app.FragmentPagerAdapter
 import com.twismart.wallpapershd.data.model.Wallpaper
-import com.twismart.wallpapershd.ui.base.BaseContract
 
-class ListWallpapersContract {
+class WallpaperDetailPagerAdapter(fragmentManager: FragmentManager, val context: Context, val wallpaperList: ArrayList<Wallpaper>?) : FragmentPagerAdapter(fragmentManager) {
 
-    interface Presenter<V : ListWallpapersContract.View> : BaseContract.Presenter<V> {
-        fun getWallpapersList()
-        fun getMostPopularWallpapers()
-        fun getFavoriteWallpapers()
-    }
+    override fun getItem(position: Int) = WallpaperDetailFragment.Companion.newInstance(wallpaperList!![position], position)
 
-    interface View : BaseContract.View {
-        fun setWallpaperList(wallpaperList: ArrayList<Wallpaper>)
-    }
+    override fun getCount() = wallpaperList?.size ?: 0
 }

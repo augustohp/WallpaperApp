@@ -14,24 +14,20 @@
  * limitations under the License.
  */
 
-package com.twismart.wallpapershd.ui.wallpaper.activity
+package com.twismart.wallpapershd.ui.main
 
 import com.twismart.wallpapershd.data.model.Wallpaper
 import com.twismart.wallpapershd.ui.base.BaseContract
 
-class WallpapersContract {
+class WallpaperListContract {
 
-    interface Presenter<V : View> : BaseContract.Presenter<V> {
-        fun setWallpaperFromUrl(url: String, positionFragment: Int)
-        fun checkIfWallpaperIsFavorite(idWallpaper: String, positionFragment: Int)
-        fun addWallpaperToFavorites(wallpaperToFavorites: Wallpaper, positionFragment: Int)
-        fun deleteWallpaperFromFavorites(id: String, positionFragment: Int)
+    interface Presenter<V : WallpaperListContract.View> : BaseContract.Presenter<V> {
+        fun loadWallpapersList()
+        fun loadMostPopularWallpapers()
+        fun loadFavoriteWallpapers()
     }
 
     interface View : BaseContract.View {
-        fun wallpaperIsInFavorites(positionFragment: Int)
-        fun wallpaperIsNotInFavorites(positionFragment: Int)
-        fun loadingWallpaper(positionFragment: Int)
-        fun readyWallpaper(positionFragment: Int)
+        fun setWallpaperList(wallpaperList: ArrayList<Wallpaper>)
     }
 }
